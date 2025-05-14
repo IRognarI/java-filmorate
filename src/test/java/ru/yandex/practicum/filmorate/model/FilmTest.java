@@ -27,7 +27,7 @@ class FilmTest {
     public void checkingCorrectnessOfName() {
         String name = "Акула";
 
-        film.validationName(name);
+        film.setName(film.validationName(name));
         Assertions.assertEquals(name, film.getName());
     }
 
@@ -49,7 +49,7 @@ class FilmTest {
 
         String description = "hello";
 
-        film.validationDescription(description);
+        film.setDescription(film.validationDescription(description));
 
         Assertions.assertNotNull(film.getDescription());
         Assertions.assertEquals(description, film.getDescription());
@@ -74,7 +74,7 @@ class FilmTest {
         try {
             LocalDate localDate = LocalDate.parse(releaseDate, film.getFORMAT());
 
-            film.validationReleaseDate(releaseDate);
+            film.setReleaseDate(film.validationReleaseDate(releaseDate));
             Assertions.assertNotNull(film.getReleaseDate());
 
             String expectedRelease = String.valueOf(localDate);
@@ -98,7 +98,7 @@ class FilmTest {
         long durationFilm = 125L;
 
         Duration duration = Duration.ofMinutes(durationFilm);
-        film.validationDuration(durationFilm);
+        film.setDuration(film.validationDuration(durationFilm));
 
         String expectedDuration = String.valueOf(duration);
         String actualDuration = String.valueOf(film.getDuration());

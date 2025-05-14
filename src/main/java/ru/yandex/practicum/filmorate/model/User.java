@@ -20,7 +20,7 @@ public class User extends Film {
     private String login;
     private LocalDate birthday = LocalDate.now();
 
-    LocalDate validationBirthday(String birthdayVal) throws NullPointerException, ValidationException {
+    public LocalDate validationBirthday(String birthdayVal) throws NullPointerException, ValidationException {
 
         if (birthdayVal == null || birthdayVal.isEmpty()) {
             throw new NullPointerException("Дата рождения указана не корректно");
@@ -49,7 +49,7 @@ public class User extends Film {
      * В классе User написана валидация даты рождения. Осталось дописать валидацию по остальным полям.
      * Продолжить, здесь, писать методы валидации...*/
 
-    String validationEmail(String mail) throws NullPointerException, ValidationException {
+    public String validationEmail(String mail) throws NullPointerException, ValidationException {
 
         if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");
 
@@ -80,7 +80,7 @@ public class User extends Film {
         }
     }
 
-    String validationLogin(String userLogin) throws NullPointerException, ValidationException {
+    public String validationLogin(String userLogin) throws NullPointerException, ValidationException {
 
         if (userLogin == null || userLogin.isEmpty()) {
             throw new NullPointerException("Логин не может быть пустым");
@@ -93,8 +93,7 @@ public class User extends Film {
         return login = userLogin.trim();
     }
 
-    @Override
-    String validationName(String userName) throws NullPointerException {
+    public String validationName(String userName) throws NullPointerException {
 
         if (userName == null || userName.isEmpty()) {
 

@@ -27,7 +27,7 @@ public class Film {
     private LocalDate releaseDate;
     private Duration duration;
 
-    String validationName(String nameFilms) throws NullPointerException, ValidationException {
+    public String validationName(String nameFilms) throws NullPointerException, ValidationException {
 
         if (nameFilms == null || nameFilms.isEmpty()) {
             throw new NullPointerException("У фильма должно быть название!");
@@ -37,10 +37,10 @@ public class Film {
         String finalFormatName = lowerCaseName.substring(0, 1).toUpperCase().concat(lowerCaseName.substring(1));
 
 
-        return name = finalFormatName;
+        return finalFormatName;
     }
 
-    String validationDescription(String filmDescription) throws NullPointerException, ValidationException {
+    public String validationDescription(String filmDescription) throws NullPointerException, ValidationException {
 
         if (filmDescription == null) {
             throw new NullPointerException("Не корректное описание фильма");
@@ -50,10 +50,10 @@ public class Film {
             throw new ValidationException("Максимальная длина описания — " + MAX_LENGTH_DESCRIPTION + " символов");
         }
 
-        return description = filmDescription.trim();
+        return filmDescription.trim();
     }
 
-    LocalDate validationReleaseDate(String release) throws NullPointerException {
+    public LocalDate validationReleaseDate(String release) throws NullPointerException {
 
         if (release == null || release.isEmpty()) {
             throw new NullPointerException("Укажите корректную дату релиза фильма");
@@ -67,7 +67,7 @@ public class Film {
             if (!actualReleaseDate) {
                 throw new ValidationException("Дата релиза должна быть не раньше: " + MIN_RELEASE_DATE.format(FORMAT));
             } else {
-                return releaseDate = validateReleaseDate;
+                return validateReleaseDate;
             }
         } catch (DateTimeParseException e) {
             throw new ValidationException("Формат даты релиза указан не корректно. Корректный формат даты: dd.MM.yyyy");
@@ -76,7 +76,7 @@ public class Film {
         }
     }
 
-    Duration validationDuration(Long filmDuration) throws NullPointerException, ValidationException {
+    public Duration validationDuration(Long filmDuration) throws NullPointerException, ValidationException {
 
         if (filmDuration == null) {
             throw new NullPointerException("Укажите корректную продолжительность фильма");
@@ -92,6 +92,6 @@ public class Film {
 
         Duration valideteDuration = Duration.ofMinutes(filmDuration);
 
-        return duration = valideteDuration;
+        return valideteDuration;
     }
 }

@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import ch.qos.logback.classic.Logger;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -12,29 +12,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@NoArgsConstructor
 @Data
-@Builder
 public class Film {
-    private final Logger log = (Logger) LoggerFactory.getLogger(FilmorateApplication.class);
+    private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmorateApplication.class);
 
-    @Builder.Default
     private final int MAX_LENGTH_DESCRIPTION = 200;
-    @Builder.Default
-    private final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    @Builder.Default
+    protected final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     private long ID;
     private String name;
     private String description;
     private LocalDate releaseDate;
-    @Builder.Default
-    private Duration duration = Duration.ZERO;
+    private Duration duration;
 
-    private String validationName(String nameFilms) throws ValidationException {
+    String validationName(String nameFilms) throws NullPointerException, ValidationException {
 
         if (nameFilms == null || nameFilms.isEmpty()) {
-            throw new ValidationException("У фильма должно быть название!");
+            throw new NullPointerException("У фильма должно быть название!");
         }
 
         String lowerCaseName = nameFilms.toLowerCase().trim();
@@ -44,10 +40,10 @@ public class Film {
         return name = finalFormatName;
     }
 
-    private String validationDescription(String filmDescription) throws ValidationException {
+    String validationDescription(String filmDescription) throws NullPointerException, ValidationException {
 
         if (filmDescription == null) {
-            throw new ValidationException("Не корректное описание фильма");
+            throw new NullPointerException("Не корректное описание фильма");
         }
 
         if (filmDescription.length() > MAX_LENGTH_DESCRIPTION) {
@@ -57,10 +53,10 @@ public class Film {
         return description = filmDescription.trim();
     }
 
-    private LocalDate validationReleaseDate(String release) {
+    LocalDate validationReleaseDate(String release) throws NullPointerException {
 
         if (release == null || release.isEmpty()) {
-            throw new ValidationException("Укажите корректную дату релиза фильма");
+            throw new NullPointerException("Укажите корректную дату релиза фильма");
         }
 
         try {
@@ -74,13 +70,13 @@ public class Film {
                 return releaseDate = validateReleaseDate;
             }
         } catch (DateTimeParseException e) {
-            throw new ValidationException("Дата релиза указана не корректно. Корректный формат даты: dd.MM.yyyy");
+            throw new ValidationException("Формат даты релиза указан не корректно. Корректный формат даты: dd.MM.yyyy");
         } catch (Exception e) {
             throw new ValidationException("Ошибка валидации: " + e.getMessage());
         }
     }
 
-    private Duration validationDuration(Long filmDuration) throws NullPointerException, ValidationException {
+    Duration validationDuration(Long filmDuration) throws NullPointerException, ValidationException {
 
         if (filmDuration == null) {
             throw new NullPointerException("Укажите корректную продолжительность фильма");

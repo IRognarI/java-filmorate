@@ -34,10 +34,7 @@ public class Film {
         }
 
         String lowerCaseName = nameFilms.toLowerCase().trim();
-        String finalFormatName = lowerCaseName.substring(0, 1).toUpperCase().concat(lowerCaseName.substring(1));
-
-
-        return finalFormatName;
+        return lowerCaseName.substring(0, 1).toUpperCase().concat(lowerCaseName.substring(1));
     }
 
     public String validationDescription(String filmDescription) throws NullPointerException, ValidationException {

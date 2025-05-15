@@ -83,7 +83,7 @@ public class FilmController {
             throw new NullPointerException("В коллекции нет данного фильма");
         }
 
-        if (oldFilm.getID() != null && filmMap.containsKey(filmObject.getID() )) {
+        if (oldFilm.getID() != null && filmMap.containsKey(filmObject.getID())) {
 
             boolean nameFilmExists = filmMap.values()
                     .stream()

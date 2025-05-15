@@ -1,4 +1,3 @@
-/*
 package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.Assertions;
@@ -9,44 +8,11 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import java.time.LocalDate;
 
 class UserTest {
-    User user;
+    private User user;
 
     @BeforeEach
     public void addUserClass() {
         user = new User();
-    }
-
-    @Test
-    public void checkMailWithoutSpecialCharacter() {
-        String inCorrectEmail = "someAddressName.com";
-
-        Assertions.assertThrows(ValidationException.class, () -> user.validationEmail(inCorrectEmail));
-        Assertions.assertNull(user.getEmail());
-
-    }
-
-    @Test
-    public void checkMailForEmptiness() {
-        String inCorrectEmail = "";
-
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationEmail(inCorrectEmail));
-        Assertions.assertNull(user.getEmail());
-    }
-
-    @Test
-    public void checkMailForEmptinessWithSpecialCharacter() {
-        String inCorrectEmail = "someAddressName @gmail.com";
-
-        Assertions.assertThrows(ValidationException.class, () -> user.validationEmail(inCorrectEmail));
-        Assertions.assertNull(user.getEmail());
-    }
-
-    @Test
-    public void checkingCorrectEmail() {
-        String correctEmail = "someAddressName@gmail.com";
-
-        user.validationEmail(correctEmail);
-        Assertions.assertEquals(correctEmail, user.getEmail());
     }
 
     @Test
@@ -65,27 +31,18 @@ class UserTest {
     public void checkLoginForCorrectness() {
         String correctedLogin = "Aleks";
 
-        user.validationLogin(correctedLogin);
+        user.setLogin(user.validationLogin(correctedLogin));
         Assertions.assertEquals(correctedLogin, user.getLogin());
     }
 
-    */
-/*В данном методе проверяется имя на пустоту. Если оно пустое, то в качестве имени возвращается логин.
- * При условии, что он не тоже не пустой и не null*//*
-
-
     @Test
     public void checkingNameForEmptiness() {
-        String login = "Aleks";
-        user.setLogin(login);
+        String login = "";
+        user.setLogin("Алекс");
 
-        user.validationName(null);
-        Assertions.assertEquals(login, user.getName(), "Поле name остается null");
+        user.setName(user.validationName(login));
+        Assertions.assertEquals(user.getLogin(), user.getName(), "Поле name остается null");
     }
-
-    */
-/*В данном методе логин будет пуст(null), поэтому должно быть выброшено исключение: NullPointerException*//*
-
 
     @Test
     public void checkingNameAndLoginForEmptiness() {
@@ -98,44 +55,29 @@ class UserTest {
     public void checkCorrectnessOfSetName() {
         String name = "Achilles";
 
-        user.validationName(name);
+        user.setName(user.validationName(name));
         Assertions.assertEquals(name, user.getName());
     }
 
     @Test
     public void checkDateOfBirthInFutureTense() {
-        String birthDay = "20.05.2025";
+        LocalDate date = LocalDate.now().plusYears(1);
 
-        Assertions.assertThrows(ValidationException.class, () -> user.validationBirthday(birthDay));
-        Assertions.assertEquals(user.getBirthday(), LocalDate.now());
+        Assertions.assertThrows(ValidationException.class, () -> user.setBirthday(user.validationBirthday(date)));
     }
 
     @Test
     public void checkDateOfBirthByToday() {
-        String birthDay = "14.05.2025";
+        LocalDate date = LocalDate.now();
 
-        Assertions.assertThrows(ValidationException.class, () -> user.validationBirthday(birthDay));
-        Assertions.assertEquals(user.getBirthday(), LocalDate.now());
+        Assertions.assertThrows(ValidationException.class, () -> user.setBirthday(user.validationBirthday(date)));
     }
 
     @Test
     public void checkingCorrectDateOfBirth() {
-        String birthDay = "31.07.1997";
+        LocalDate date = LocalDate.of(1998, 07, 29);
 
-        LocalDate actualBirthDay = LocalDate.parse(birthDay, user.getFORMATTER());
-        user.validationBirthday(birthDay);
-
-        Assertions.assertEquals(actualBirthDay, user.getBirthday());
+        user.setBirthday(user.validationBirthday(date));
+        Assertions.assertEquals(date, user.getBirthday());
     }
-
-    @Test
-    public void checkingCorrectnessOfDateOfBirthFormat() {
-        String inCorrectFormatBirthday = "14 мая 2013";
-        String emptyBirthday = "";
-
-        Assertions.assertThrows(ValidationException.class, () -> user.validationBirthday(inCorrectFormatBirthday));
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationBirthday(emptyBirthday));
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationBirthday(null));
-        Assertions.assertEquals(LocalDate.now(), user.getBirthday());
-    }
-}*/
+}

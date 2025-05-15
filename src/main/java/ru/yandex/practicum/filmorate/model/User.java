@@ -1,56 +1,45 @@
-/*
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"login", "email"})
 public class User {
 
-    @NonNull
+    @Email(message = "Не корректный формат email адреса")
     private String email;
-    @NonNull
     private String login;
+    private String name;
+
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate birthday = LocalDate.now();
 
-    public LocalDate validationBirthday(String birthdayVal) throws NullPointerException, ValidationException {
+    public LocalDate validationBirthday(LocalDate birthdayVal) throws NullPointerException, ValidationException {
 
-        if (birthdayVal == null || birthdayVal.isEmpty()) {
+        if (birthdayVal == null) {
             throw new NullPointerException("Дата рождения указана не корректно");
         }
 
-        try {
-            LocalDate actualBirthday = LocalDate.parse(birthdayVal.trim(), FORMATTER);
-
-            if (actualBirthday.isAfter(birthday)) {
-                throw new ValidationException("Дата рождения не может быть в будущем");
-
-            } else if (actualBirthday.isEqual(birthday)) {
-                throw new ValidationException("Вы еще слишком молоды для регистрации :)");
-
-            } else {
-                return birthday = actualBirthday;
-            }
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("Не корректный формат даты рождения. Верный формат даты: dd.MM.yyyy");
-
-        } catch (Exception e) {
-            throw new ValidationException(e.getMessage());
+        if (birthdayVal.isAfter(birthday)) {
+            throw new ValidationException("Дата рождения не может быть в будущем времени");
         }
+
+        if (birthdayVal.isEqual(birthday)) {
+            throw new ValidationException("Вы еще слишком молоды для регистрации ;)");
+        }
+
+        return birthdayVal;
     }
-    */
-/*Класс Film предварительно закончен;
- * В классе User написана валидация даты рождения. Осталось дописать валидацию по остальным полям.
- * Продолжить, здесь, писать методы валидации...*//*
 
-
+    @Deprecated
     public String validationEmail(String mail) throws NullPointerException, ValidationException {
 
         if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");
@@ -78,7 +67,7 @@ public class User {
                                     " some_address@gmail.com"
                     );
         } else {
-            return email = mail.trim();
+            return mail.trim();
         }
     }
 
@@ -92,7 +81,9 @@ public class User {
 
         if (valueIsBlank != -1) throw new ValidationException("Логин не может содержать пробелы");
 
-        return login = userLogin.trim();
+        String loginToLowerCase = userLogin.trim().toLowerCase();
+
+        return loginToLowerCase.substring(0, 1).toUpperCase().concat(loginToLowerCase.substring(1));
     }
 
     public String validationName(String userName) throws NullPointerException {
@@ -100,15 +91,15 @@ public class User {
         if (userName == null || userName.isEmpty()) {
 
             if (login != null && !login.isEmpty()) {
-                setName(login);
-                return getName();
+                return getLogin();
+
             } else {
                 throw new NullPointerException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
             }
         }
 
-        setName(userName.trim());
-        return getName();
+        String nameToLowerCase = userName.trim().toLowerCase();
+
+        return nameToLowerCase.substring(0, 1).toUpperCase().concat(nameToLowerCase.substring(1));
     }
 }
-*/

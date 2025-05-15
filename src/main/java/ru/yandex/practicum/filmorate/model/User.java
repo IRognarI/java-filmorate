@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -11,9 +10,8 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"login", "email"})
 public class User {
-
+    private Long ID;
     @Email(message = "Не корректный формат email адреса")
     private String email;
     private String login;
@@ -39,7 +37,7 @@ public class User {
         return birthdayVal;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String validationEmail(String mail) throws NullPointerException, ValidationException {
 
         if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");

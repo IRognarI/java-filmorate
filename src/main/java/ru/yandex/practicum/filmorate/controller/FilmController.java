@@ -95,16 +95,16 @@ public class FilmController {
                 throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
             }
 
-            oldFilm.setName(film.validationName(filmObject.getName() != null ? filmObject.getName() :
-                    oldFilm.getName()));
+            oldFilm.setName(film.validationName(!filmObject.getName().equalsIgnoreCase(oldFilm.getName()) ?
+                    filmObject.getName() : oldFilm.getName()));
 
-            oldFilm.setDescription(film.validationDescription(filmObject.getDescription() != null ?
-                    filmObject.getDescription() : oldFilm.getDescription()));
+            oldFilm.setDescription(film.validationDescription(!filmObject.getDescription().
+                    equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
 
-            oldFilm.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate() != null ?
-                    filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
+            oldFilm.setReleaseDate(film.validationReleaseDate(!filmObject.getReleaseDate().
+                    isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
 
-            oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != null ?
+            oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != oldFilm.getDuration() ?
                     filmObject.getDuration() : oldFilm.getDuration()));
         }
 

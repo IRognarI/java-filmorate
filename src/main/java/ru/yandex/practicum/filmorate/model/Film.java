@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
@@ -10,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(of = {"ID", "name"})
 public class Film {
     @JsonIgnore
     @Getter(AccessLevel.NONE)

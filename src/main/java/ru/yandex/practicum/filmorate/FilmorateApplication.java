@@ -8,10 +8,6 @@ public class FilmorateApplication {
 
     public static void main(String[] args) {
 
-        /*Film film = Film.builder().build();
-        film.getLog().setLevel(Level.ERROR);*/
-
-
         SpringApplication.run(FilmorateApplication.class, args);
     }
 

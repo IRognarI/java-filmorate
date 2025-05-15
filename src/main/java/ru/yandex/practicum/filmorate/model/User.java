@@ -1,3 +1,4 @@
+/*
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
@@ -11,8 +12,7 @@ import java.time.format.DateTimeParseException;
 
 @Data
 @NoArgsConstructor
-public class User extends Film {
-    private final DateTimeFormatter FORMATTER = super.FORMAT;
+public class User {
 
     @NonNull
     private String email;
@@ -45,9 +45,11 @@ public class User extends Film {
             throw new ValidationException(e.getMessage());
         }
     }
-    /*Класс Film предварительно закончен;
-     * В классе User написана валидация даты рождения. Осталось дописать валидацию по остальным полям.
-     * Продолжить, здесь, писать методы валидации...*/
+    */
+/*Класс Film предварительно закончен;
+ * В классе User написана валидация даты рождения. Осталось дописать валидацию по остальным полям.
+ * Продолжить, здесь, писать методы валидации...*//*
+
 
     public String validationEmail(String mail) throws NullPointerException, ValidationException {
 
@@ -109,3 +111,4 @@ public class User extends Film {
         return getName();
     }
 }
+*/

@@ -1,46 +1,53 @@
 package ru.yandex.practicum.filmorate.model;
 
-import ch.qos.logback.classic.Logger;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.FilmorateApplication;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(of = {"ID", "name"})
 public class Film {
-    private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmorateApplication.class);
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    protected final int MAX_LENGTH_DESCRIPTION = 200;
 
-    private final int MAX_LENGTH_DESCRIPTION = 200;
-    protected final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    protected final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    private long ID;
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    private final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    private Long ID;
     private String name;
     private String description;
+
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate releaseDate;
-    private Duration duration;
+    private Integer duration;
 
-    public String validationName(String nameFilms) throws NullPointerException, ValidationException {
+    public String validationName(String nameFilms) throws ValidationException {
 
-        if (nameFilms == null || nameFilms.isEmpty()) {
-            throw new NullPointerException("У фильма должно быть название!");
+        if (nameFilms == null || nameFilms.trim().isEmpty()) {
+            throw new ValidationException("Имя не может быть пустым");
         }
 
-        String lowerCaseName = nameFilms.toLowerCase().trim();
-        return lowerCaseName.substring(0, 1).toUpperCase().concat(lowerCaseName.substring(1));
+        String normalizeName = nameFilms.trim().substring(0, 1).toUpperCase() +
+                nameFilms.trim().substring(1).toLowerCase();
+
+        return normalizeName;
     }
 
-    public String validationDescription(String filmDescription) throws NullPointerException, ValidationException {
+    public String validationDescription(String filmDescription) throws ValidationException {
 
         if (filmDescription == null) {
-            throw new NullPointerException("Не корректное описание фильма");
+            throw new ValidationException("Не корректное описание фильма");
         }
 
         if (filmDescription.length() > MAX_LENGTH_DESCRIPTION) {
@@ -50,45 +57,28 @@ public class Film {
         return filmDescription.trim();
     }
 
-    public LocalDate validationReleaseDate(String release) throws NullPointerException {
+    public LocalDate validationReleaseDate(LocalDate release) throws ValidationException {
 
-        if (release == null || release.isEmpty()) {
-            throw new NullPointerException("Укажите корректную дату релиза фильма");
+        if (release == null) {
+            throw new ValidationException("Укажите корректную дату релиза фильма");
         }
 
-        try {
-            LocalDate validateReleaseDate = LocalDate.parse(release.trim(), FORMAT);
-
-            boolean actualReleaseDate = validateReleaseDate.isAfter(MIN_RELEASE_DATE);
-
-            if (!actualReleaseDate) {
-                throw new ValidationException("Дата релиза должна быть не раньше: " + MIN_RELEASE_DATE.format(FORMAT));
-            } else {
-                return validateReleaseDate;
-            }
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("Формат даты релиза указан не корректно. Корректный формат даты: dd.MM.yyyy");
-        } catch (Exception e) {
-            throw new ValidationException("Ошибка валидации: " + e.getMessage());
+        if (release.isBefore(MIN_RELEASE_DATE)) {
+            throw new ValidationException("Дата релиза не может быть раньше: " + MIN_RELEASE_DATE.format(FORMAT));
         }
+        return release;
     }
 
-    public Duration validationDuration(Long filmDuration) throws NullPointerException, ValidationException {
+    public Integer validationDuration(Integer filmDuration) throws ValidationException {
 
         if (filmDuration == null) {
-            throw new NullPointerException("Укажите корректную продолжительность фильма");
-        }
-
-        if (!(filmDuration instanceof Number)) {
-            throw new ValidationException("Продолжительность фильма нужно указать в минутах, в виде целого числа");
+            throw new ValidationException("Укажите корректную продолжительность фильма");
         }
 
         if (filmDuration < 1) {
             throw new ValidationException("Продолжительность фильма не может быть: " + filmDuration);
         }
 
-        Duration valideteDuration = Duration.ofMinutes(filmDuration);
-
-        return valideteDuration;
+        return filmDuration;
     }
 }

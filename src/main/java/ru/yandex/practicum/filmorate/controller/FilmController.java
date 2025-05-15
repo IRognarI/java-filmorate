@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import jakarta.validation.Valid;
+import lombok.Getter;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.DuplicatedException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -13,7 +16,10 @@ import java.util.*;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final Film film = new Film();
+    @Getter
+    private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmController.class);
+
+    private Film film;
     private final Map<Long, Film> filmMap = new HashMap<>();
 
     private Long nextID() {
@@ -26,27 +32,104 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film filmObject) {
+    public Object addFilm(@RequestBody @Valid Film filmObject) {
+        LOG.setLevel(Level.DEBUG);
 
         if (filmObject == null) {
             throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
         }
 
+        boolean nameFilmExists = filmMap.values()
+                .stream()
+                .map(f -> f.getName())
+                .anyMatch(f -> f.equals(filmObject.getName()));
+
+        if (nameFilmExists) {
+            throw new DuplicatedException("Кино уже было добавлено");
+        }
+
+        LOG.info("Получено ID: " + filmObject.getID());
+        LOG.info("Получено название: " + filmObject.getName());
+        LOG.info("Получено описание: " + filmObject.getDescription());
+        LOG.info("Получена дата: " + filmObject.getReleaseDate());
+        LOG.info("Получена продолжительность: " + filmObject.getDuration());
+
+        film = new Film();
+
         film.setID(nextID());
         film.setName(film.validationName(filmObject.getName()));
         film.setDescription(film.validationDescription(filmObject.getDescription()));
+        film.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate()));
+        film.setDuration(filmObject.getDuration());
 
-        String release = filmObject.getReleaseDate().format(film.getFORMAT());
-        long duration = filmObject.getDuration().toMinutes();
+        filmMap.put(film.getID(), film);
+        return film;
+    }
 
-        film.setReleaseDate(film.validationReleaseDate(release));
-        film.setDuration(film.validationDuration(duration));
+    @PutMapping
+    public Object updateFilm(@RequestBody @Valid Film filmObject) {
+        LOG.setLevel(Level.DEBUG);
 
-        if (film == null) {
-            throw new ValidationException("Объект не может быть создан! Нужна проверка корректности создания объекта!");
-        } else {
-            filmMap.put(film.getID(), film);
-            return film;
+        if (filmObject == null) {
+            throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
         }
+
+        LOG.info("Получено ID: " + filmObject.getID());
+        LOG.info("Получено название: " + filmObject.getName());
+        LOG.info("Получено описание: " + filmObject.getDescription());
+        LOG.info("Получена дата: " + filmObject.getReleaseDate());
+        LOG.info("Получена продолжительность: " + filmObject.getDuration());
+
+        Film oldFilm = filmMap.get(film.getID());
+
+        if (!filmMap.containsValue(oldFilm)) {
+            throw new NullPointerException("Данный фильм в коллекции не найден");
+        }
+
+        if (filmObject.getID() != null) {
+
+            boolean nameFilmExists = filmMap.values()
+                    .stream()
+                    .map(f -> f.getName())
+                    .anyMatch(f -> f.equals(filmObject.getName()));
+
+
+            if (nameFilmExists) {
+                throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
+            }
+
+            oldFilm.setName(film.validationName(filmObject.getName() != null ? filmObject.getName() :
+                    oldFilm.getName()));
+
+            oldFilm.setDescription(film.validationDescription(filmObject.getDescription() != null ?
+                    filmObject.getDescription() : oldFilm.getDescription()));
+
+            oldFilm.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate() != null ?
+                    filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
+
+            oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != null ?
+                    filmObject.getDuration() : oldFilm.getDuration()));
+        }
+        return oldFilm;
+    }
+
+    @GetMapping
+    public Collection<Film> getFilms() {
+
+        if (filmMap.isEmpty()) {
+            throw new NullPointerException("В коллекцию фильмов еще не добавлен не один фильм");
+        }
+
+        return filmMap.values();
+    }
+
+    @DeleteMapping
+    public void deleteAllFilms() {
+
+        if (filmMap.isEmpty()) {
+            throw new NullPointerException("Коллекция фильмов уже пустая");
+        }
+
+        filmMap.clear();
     }
 }

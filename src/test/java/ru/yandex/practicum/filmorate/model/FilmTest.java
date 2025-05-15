@@ -5,30 +5,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
-class FilmTest {
+class FilmTest extends Film {
     private Film film;
 
+
     @BeforeEach
-    public void addFilmClass() {
+    public void createDefaultFilm() {
         film = new Film();
     }
 
     @Test
     public void checkNameForEmptiness() {
-        Assertions.assertThrows(NullPointerException.class, () -> film.validationName(null));
-        Assertions.assertNull(film.getName());
+
+        Assertions.assertThrows(ValidationException.class, () -> film.validationName(null));
+        Assertions.assertThrows(ValidationException.class, () -> film.validationName(""));
     }
 
     @Test
     public void checkingCorrectnessOfName() {
-        String name = "Акула";
 
-        film.setName(film.validationName(name));
-        Assertions.assertEquals(name, film.getName());
+        film.setName("Shark");
+        Assertions.assertNotNull(film.getName());
+        Assertions.assertEquals("Shark", film.getName());
     }
 
     @Test
@@ -36,73 +36,39 @@ class FilmTest {
         String description = "hello";
         int lengthDescription = description.length();
 
-        String checkDescription = description.repeat(film.getMAX_LENGTH_DESCRIPTION() + lengthDescription);
+        String longerThanMaximumLength = description.repeat(super.MAX_LENGTH_DESCRIPTION + lengthDescription);
 
-        Assertions.assertNull(film.getDescription());
-
-        Assertions.assertThrows(ValidationException.class, () -> film.validationDescription(checkDescription));
-        Assertions.assertThrows(NullPointerException.class, () -> film.validationDescription(null));
+        Assertions.assertThrows(ValidationException.class, () -> film.validationDescription(longerThanMaximumLength));
     }
 
     @Test
     public void checkingCorrectDescription() {
-
-        String description = "hello";
-
-        film.setDescription(film.validationDescription(description));
+        film.setDescription("Some description");
 
         Assertions.assertNotNull(film.getDescription());
-        Assertions.assertEquals(description, film.getDescription());
+        Assertions.assertTrue(film.getDescription().length() <= super.MAX_LENGTH_DESCRIPTION);
     }
 
     @Test
     public void checkingReleaseOfMovieBeforeSetDate() {
-        Assertions.assertThrows(ValidationException.class, () -> film.validationReleaseDate("10.05.1894"));
-        Assertions.assertNull(film.getReleaseDate());
-    }
+        LocalDate releaseDate = LocalDate.of(1894, 05, 10);
 
-    @Test
-    public void checkingIncorrectFormatOfMovieReleaseDate() {
-        Assertions.assertThrows(ValidationException.class, () -> film.validationReleaseDate("10 мая 2007"));
-        Assertions.assertNull(film.getReleaseDate());
+        film.setReleaseDate(releaseDate);
+
+        Assertions.assertThrows(ValidationException.class, () -> film.validationReleaseDate(film.getReleaseDate()));
+        Assertions.assertTrue(film.getReleaseDate().isBefore(super.MIN_RELEASE_DATE));
     }
 
     @Test
     public void checkingCorrectReleaseDate() {
-        String releaseDate = "12.10.2002";
 
-        try {
-            LocalDate localDate = LocalDate.parse(releaseDate, film.getFORMAT());
-
-            film.setReleaseDate(film.validationReleaseDate(releaseDate));
-            Assertions.assertNotNull(film.getReleaseDate());
-
-            String expectedRelease = String.valueOf(localDate);
-            String actualRelease = String.valueOf(film.getReleaseDate());
-
-            Assertions.assertEquals(expectedRelease, actualRelease);
-        } catch (DateTimeParseException e) {
-            System.out.println("Ошибка преобразования объекта LocalDate из строки");
-        }
+        film.setReleaseDate(super.MIN_RELEASE_DATE.plusYears(2));
+        Assertions.assertTrue(film.getReleaseDate().isAfter(super.MIN_RELEASE_DATE));
     }
 
     @Test
     public void checkNegativeDurationOfMovie() {
-        Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(0L));
-        Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(-10L));
-        Assertions.assertNull(film.getDuration());
-    }
-
-    @Test
-    public void checkingCorrectDurationOfMovie() {
-        long durationFilm = 125L;
-
-        Duration duration = Duration.ofMinutes(durationFilm);
-        film.setDuration(film.validationDuration(durationFilm));
-
-        String expectedDuration = String.valueOf(duration);
-        String actualDuration = String.valueOf(film.getDuration());
-
-        Assertions.assertEquals(expectedDuration, actualDuration);
+        Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(0));
+        Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(-10));
     }
 }

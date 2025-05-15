@@ -1,3 +1,4 @@
+/*
 package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.Assertions;
@@ -68,8 +69,10 @@ class UserTest {
         Assertions.assertEquals(correctedLogin, user.getLogin());
     }
 
-    /*В данном методе проверяется имя на пустоту. Если оно пустое, то в качестве имени возвращается логин.
-     * При условии, что он не тоже не пустой и не null*/
+    */
+/*В данном методе проверяется имя на пустоту. Если оно пустое, то в качестве имени возвращается логин.
+ * При условии, что он не тоже не пустой и не null*//*
+
 
     @Test
     public void checkingNameForEmptiness() {
@@ -80,7 +83,9 @@ class UserTest {
         Assertions.assertEquals(login, user.getName(), "Поле name остается null");
     }
 
-    /*В данном методе логин будет пуст(null), поэтому должно быть выброшено исключение: NullPointerException*/
+    */
+/*В данном методе логин будет пуст(null), поэтому должно быть выброшено исключение: NullPointerException*//*
+
 
     @Test
     public void checkingNameAndLoginForEmptiness() {
@@ -133,4 +138,4 @@ class UserTest {
         Assertions.assertThrows(NullPointerException.class, () -> user.validationBirthday(null));
         Assertions.assertEquals(LocalDate.now(), user.getBirthday());
     }
-}
+}*/

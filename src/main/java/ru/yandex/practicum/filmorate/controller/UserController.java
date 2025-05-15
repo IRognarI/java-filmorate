@@ -1,21 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.FilmorateApplication;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmorateApplication.class);
     private final Map<Long, User> userMap = new HashMap<>();
     private User user;
 
@@ -31,17 +29,17 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody @Valid User userObject) {
-        LOG.setLevel(Level.DEBUG);
+        log.isEnabledForLevel(org.slf4j.event.Level.DEBUG);
 
         if (userObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"User\"");
         }
 
-        LOG.debug("Получен ID: {}", userObject.getID());
-        LOG.debug("Получен email: {}", userObject.getEmail().trim());
-        LOG.debug("Получен login: {}", userObject.getLogin().trim());
-        LOG.debug("Получено name: {}", userObject.getName().trim());
-        LOG.debug("Получен birthday: {}", userObject.getBirthday());
+        log.debug("Получен ID: {}", userObject.getID());
+        log.debug("Получен email: {}", userObject.getEmail().trim());
+        log.debug("Получен login: {}", userObject.getLogin().trim());
+        log.debug("Получено name: {}", userObject.getName().trim());
+        log.debug("Получен birthday: {}", userObject.getBirthday());
 
         boolean logiExists = userMap.values()
                 .stream()
@@ -74,7 +72,7 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User userObject) {
-        LOG.setLevel(Level.DEBUG);
+        log.isEnabledForLevel(Level.DEBUG);
 
         if (userObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"User\"");
@@ -84,11 +82,11 @@ public class UserController {
             throw new ValidationException("ID должен быть указан");
         }
 
-        LOG.debug("Получен ID: {}", userObject.getID());
-        LOG.debug("Получен email: {}", userObject.getEmail().trim());
-        LOG.debug("Получен login: {}", userObject.getLogin().trim());
-        LOG.debug("Получено name: {}", userObject.getName().trim());
-        LOG.debug("Получена birthdayDate: {}", userObject.getBirthday());
+        log.debug("Получен ID: {}", userObject.getID());
+        log.debug("Получен email: {}", userObject.getEmail().trim());
+        log.debug("Получен login: {}", userObject.getLogin().trim());
+        log.debug("Получено name: {}", userObject.getName().trim());
+        log.debug("Получена birthdayDate: {}", userObject.getBirthday());
 
         User oldUSer = userMap.get(userObject.getID());
 

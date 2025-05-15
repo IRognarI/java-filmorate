@@ -1,9 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -11,10 +10,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmController.class);
 
     private Film film;
     private final Map<Long, Film> filmMap = new HashMap<>();
@@ -30,7 +29,7 @@ public class FilmController {
 
     @PostMapping
     public Object addFilm(@RequestBody @Valid Film filmObject) {
-        LOG.setLevel(Level.DEBUG);
+        log.isEnabledForLevel(Level.DEBUG);
 
         if (filmObject == null) {
             throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
@@ -45,11 +44,11 @@ public class FilmController {
             throw new DuplicatedException("Кино уже было добавлено");
         }
 
-        LOG.debug("Получено ID: {}", filmObject.getID());
-        LOG.debug("Получено название: {}", filmObject.getName().trim());
-        LOG.debug("Получено описание: {}", filmObject.getDescription().trim());
-        LOG.debug("Получена дата: ", filmObject.getReleaseDate());
-        LOG.debug("Получена продолжительность: {}", filmObject.getDuration());
+        log.debug("Получено ID: {}", filmObject.getID());
+        log.debug("Получено название: {}", filmObject.getName().trim());
+        log.debug("Получено описание: {}", filmObject.getDescription().trim());
+        log.debug("Получена дата: ", filmObject.getReleaseDate());
+        log.debug("Получена продолжительность: {}", filmObject.getDuration());
 
         film = new Film();
 
@@ -65,17 +64,17 @@ public class FilmController {
 
     @PutMapping
     public Object updateFilm(@RequestBody @Valid Film filmObject) {
-        LOG.setLevel(Level.INFO);
+        log.isEnabledForLevel(Level.DEBUG);
 
         if (filmObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
         }
 
-        LOG.debug("Получено ID: " + filmObject.getID());
-        LOG.debug("Получено название: " + filmObject.getName().trim());
-        LOG.debug("Получено описание: " + filmObject.getDescription().trim());
-        LOG.debug("Получена дата: " + filmObject.getReleaseDate());
-        LOG.debug("Получена продолжительность: " + filmObject.getDuration());
+        log.debug("Получено ID: " + filmObject.getID());
+        log.debug("Получено название: " + filmObject.getName().trim());
+        log.debug("Получено описание: " + filmObject.getDescription().trim());
+        log.debug("Получена дата: " + filmObject.getReleaseDate());
+        log.debug("Получена продолжительность: " + filmObject.getDuration());
 
         Film oldFilm = filmMap.get(filmObject.getID());
 

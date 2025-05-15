@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
@@ -15,8 +14,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-
-    @Getter
     private final Logger LOG = (Logger) LoggerFactory.getLogger(FilmController.class);
 
     private Film film;
@@ -41,18 +38,18 @@ public class FilmController {
 
         boolean nameFilmExists = filmMap.values()
                 .stream()
-                .map(f -> f.getName())
-                .anyMatch(f -> f.equals(filmObject.getName()));
+                .map(f -> f.getName().trim())
+                .anyMatch(f -> f.equalsIgnoreCase(filmObject.getName().trim()));
 
         if (nameFilmExists) {
             throw new DuplicatedException("Кино уже было добавлено");
         }
 
-        LOG.info("Получено ID: " + filmObject.getID());
-        LOG.info("Получено название: " + filmObject.getName());
-        LOG.info("Получено описание: " + filmObject.getDescription());
-        LOG.info("Получена дата: " + filmObject.getReleaseDate());
-        LOG.info("Получена продолжительность: " + filmObject.getDuration());
+        LOG.debug("Получено ID: {}", filmObject.getID());
+        LOG.debug("Получено название: {}", filmObject.getName().trim());
+        LOG.debug("Получено описание: {}", filmObject.getDescription().trim());
+        LOG.debug("Получена дата: ", filmObject.getReleaseDate());
+        LOG.debug("Получена продолжительность: {}", filmObject.getDuration());
 
         film = new Film();
 
@@ -68,30 +65,30 @@ public class FilmController {
 
     @PutMapping
     public Object updateFilm(@RequestBody @Valid Film filmObject) {
-        LOG.setLevel(Level.DEBUG);
+        LOG.setLevel(Level.INFO);
 
         if (filmObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
         }
 
-        LOG.info("Получено ID: " + filmObject.getID());
-        LOG.info("Получено название: " + filmObject.getName());
-        LOG.info("Получено описание: " + filmObject.getDescription());
-        LOG.info("Получена дата: " + filmObject.getReleaseDate());
-        LOG.info("Получена продолжительность: " + filmObject.getDuration());
+        LOG.debug("Получено ID: " + filmObject.getID());
+        LOG.debug("Получено название: " + filmObject.getName().trim());
+        LOG.debug("Получено описание: " + filmObject.getDescription().trim());
+        LOG.debug("Получена дата: " + filmObject.getReleaseDate());
+        LOG.debug("Получена продолжительность: " + filmObject.getDuration());
 
-        Film oldFilm = filmMap.get(film.getID());
+        Film oldFilm = filmMap.get(filmObject.getID());
 
-        if (!filmMap.containsValue(oldFilm)) {
-            throw new NullPointerException("Данный фильм в коллекции не найден");
+        if (oldFilm == null) {
+            throw new NullPointerException("В коллекции нет данного фильма");
         }
 
-        if (filmObject.getID() != null) {
+        if (oldFilm.getID() != null && filmMap.containsKey(filmObject.getID() )) {
 
             boolean nameFilmExists = filmMap.values()
                     .stream()
-                    .map(f -> f.getName())
-                    .anyMatch(f -> f.equals(filmObject.getName()));
+                    .map(f -> f.getName().trim())
+                    .anyMatch(f -> f.equalsIgnoreCase(filmObject.getName().trim()));
 
 
             if (nameFilmExists) {
@@ -110,6 +107,7 @@ public class FilmController {
             oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != null ?
                     filmObject.getDuration() : oldFilm.getDuration()));
         }
+
         return oldFilm;
     }
 

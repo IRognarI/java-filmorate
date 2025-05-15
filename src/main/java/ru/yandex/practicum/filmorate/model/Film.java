@@ -38,8 +38,9 @@ public class Film {
             throw new ValidationException("Имя не может быть пустым");
         }
 
-        String normalizeName = nameFilms.trim().substring(0, 1).toUpperCase() +
-                nameFilms.trim().substring(1).toLowerCase();
+        String nameToLowerCase = nameFilms.trim().toLowerCase();
+        String normalizeName = nameToLowerCase.substring(0, 1).toUpperCase().
+                concat(nameToLowerCase.substring(1));
 
         return normalizeName;
     }

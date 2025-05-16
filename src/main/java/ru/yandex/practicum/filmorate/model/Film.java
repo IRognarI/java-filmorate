@@ -25,7 +25,7 @@ public class Film {
     @Getter(AccessLevel.NONE)
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    private Long ID;
+    private Long id;
     private String name;
     private String description;
 

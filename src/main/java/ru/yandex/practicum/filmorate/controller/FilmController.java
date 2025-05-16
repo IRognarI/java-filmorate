@@ -42,7 +42,7 @@ public class FilmController {
             throw new DuplicatedException("Кино уже было добавлено");
         }
 
-        log.debug("Получено ID: {}", filmObject.getID());
+        log.debug("Получено ID: {}", filmObject.getId());
         log.debug("Получено название: {}", filmObject.getName().trim());
         log.debug("Получено описание: {}", filmObject.getDescription().trim());
         log.debug("Получена дата: ", filmObject.getReleaseDate());
@@ -50,13 +50,13 @@ public class FilmController {
 
         film = new Film();
 
-        film.setID(nextID());
+        film.setId(nextID());
         film.setName(film.validationName(filmObject.getName()));
         film.setDescription(film.validationDescription(filmObject.getDescription()));
         film.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate()));
         film.setDuration(film.validationDuration(filmObject.getDuration()));
 
-        filmMap.put(film.getID(), film);
+        filmMap.put(film.getId(), film);
         return film;
     }
 
@@ -67,20 +67,20 @@ public class FilmController {
             throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
         }
 
-        log.debug("Получено ID: " + filmObject.getID());
+        log.debug("Получено ID: " + filmObject.getId());
         log.debug("Получено название: " + filmObject.getName().trim());
         log.debug("Получено описание: " + filmObject.getDescription().trim());
         log.debug("Получена дата: " + filmObject.getReleaseDate());
         log.debug("Получена продолжительность: " + filmObject.getDuration());
 
-        Film oldFilm = filmMap.get(filmObject.getID());
+        Film oldFilm = filmMap.get(filmObject.getId());
 
         if (oldFilm == null) {
             //throw new NullPointerException("В коллекции нет данного фильма");
             addFilm(filmObject);
         }
 
-        if (oldFilm.getID() != null && filmMap.containsKey(filmObject.getID())) {
+        if (oldFilm.getId() != null && filmMap.containsKey(filmObject.getId())) {
 
             boolean nameFilmExists = filmMap.values()
                     .stream()

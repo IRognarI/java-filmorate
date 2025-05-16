@@ -94,16 +94,13 @@ public class FilmController {
 
             oldFilm.setName(film.validationName(filmObject.getName()));
 
-            oldFilm.setDescription(film.validationDescription(!filmObject.getDescription().
+            oldFilm.setDescription(film.validationDescription(!filmObject.getDescription()
+                    .equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
 
-                    equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
-
-            oldFilm.setReleaseDate(film.validationReleaseDate(!filmObject.getReleaseDate().
-
-                    isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
+            oldFilm.setReleaseDate(film.validationReleaseDate(!filmObject.getReleaseDate()
+                    .isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
 
             oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != oldFilm.getDuration() ?
-
                     filmObject.getDuration() : oldFilm.getDuration()));
         }
 

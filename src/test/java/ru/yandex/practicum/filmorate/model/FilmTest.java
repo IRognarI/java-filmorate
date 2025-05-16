@@ -36,7 +36,7 @@ class FilmTest extends Film {
         String description = "hello";
         int lengthDescription = description.length();
 
-        String longerThanMaximumLength = description.repeat(super.MAX_LENGTH_DESCRIPTION + lengthDescription);
+        String longerThanMaximumLength = description.repeat(super.maxLengthDescription + lengthDescription);
 
         Assertions.assertThrows(ValidationException.class, () -> film.validationDescription(longerThanMaximumLength));
     }
@@ -46,7 +46,7 @@ class FilmTest extends Film {
         film.setDescription("Some description");
 
         Assertions.assertNotNull(film.getDescription());
-        Assertions.assertTrue(film.getDescription().length() <= super.MAX_LENGTH_DESCRIPTION);
+        Assertions.assertTrue(film.getDescription().length() <= super.maxLengthDescription);
     }
 
     @Test
@@ -56,14 +56,14 @@ class FilmTest extends Film {
         film.setReleaseDate(releaseDate);
 
         Assertions.assertThrows(ValidationException.class, () -> film.validationReleaseDate(film.getReleaseDate()));
-        Assertions.assertTrue(film.getReleaseDate().isBefore(super.MIN_RELEASE_DATE));
+        Assertions.assertTrue(film.getReleaseDate().isBefore(super.minReleaseDate));
     }
 
     @Test
     public void checkingCorrectReleaseDate() {
 
-        film.setReleaseDate(super.MIN_RELEASE_DATE.plusYears(2));
-        Assertions.assertTrue(film.getReleaseDate().isAfter(super.MIN_RELEASE_DATE));
+        film.setReleaseDate(super.minReleaseDate.plusYears(2));
+        Assertions.assertTrue(film.getReleaseDate().isAfter(super.minReleaseDate));
     }
 
     @Test

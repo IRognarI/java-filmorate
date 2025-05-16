@@ -15,15 +15,15 @@ import java.time.format.DateTimeFormatter;
 public class Film {
     @JsonIgnore
     @Getter(AccessLevel.NONE)
-    protected final int MAX_LENGTH_DESCRIPTION = 200;
+    protected final int maxLengthDescription = 200;
 
     @JsonIgnore
     @Getter(AccessLevel.NONE)
-    protected final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    protected final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
     @JsonIgnore
     @Getter(AccessLevel.NONE)
-    private final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private Long ID;
     private String name;
@@ -48,8 +48,8 @@ public class Film {
             throw new ValidationException("Не корректное описание фильма");
         }
 
-        if (filmDescription.length() > MAX_LENGTH_DESCRIPTION) {
-            throw new ValidationException("Максимальная длина описания — " + MAX_LENGTH_DESCRIPTION + " символов");
+        if (filmDescription.length() > maxLengthDescription) {
+            throw new ValidationException("Максимальная длина описания — " + maxLengthDescription + " символов");
         }
 
         return filmDescription.trim();
@@ -61,8 +61,8 @@ public class Film {
             throw new ValidationException("Укажите корректную дату релиза фильма");
         }
 
-        if (release.isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Дата релиза не может быть раньше: " + MIN_RELEASE_DATE.format(FORMAT));
+        if (release.isBefore(minReleaseDate)) {
+            throw new ValidationException("Дата релиза не может быть раньше: " + minReleaseDate.format(format));
         }
         return release;
     }

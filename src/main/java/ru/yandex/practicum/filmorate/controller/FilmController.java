@@ -18,12 +18,12 @@ public class FilmController {
     private final Map<Long, Film> filmMap = new HashMap<>();
 
     private Long nextID() {
-        long ID = filmMap.keySet()
+        long id = filmMap.keySet()
                 .stream()
-                .mapToLong(id -> id)
+                .mapToLong(i -> i)
                 .max()
                 .orElse(0);
-        return ++ID;
+        return ++id;
     }
 
     @PostMapping
@@ -95,12 +95,15 @@ public class FilmController {
             oldFilm.setName(film.validationName(filmObject.getName()));
 
             oldFilm.setDescription(film.validationDescription(!filmObject.getDescription().
+
                     equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
 
             oldFilm.setReleaseDate(film.validationReleaseDate(!filmObject.getReleaseDate().
+
                     isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
 
             oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != oldFilm.getDuration() ?
+                    
                     filmObject.getDuration() : oldFilm.getDuration()));
         }
 

@@ -103,7 +103,7 @@ public class FilmController {
                     isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
 
             oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != oldFilm.getDuration() ?
-                    
+
                     filmObject.getDuration() : oldFilm.getDuration()));
         }
 

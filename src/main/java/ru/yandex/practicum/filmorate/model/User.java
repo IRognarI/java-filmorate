@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class User {
-    private Long ID;
+    private Long id;
     @Email(message = "Не корректный формат email адреса")
     private String email;
     private String login;
@@ -58,8 +58,7 @@ public class User {
         }
 
         if (!correctedEmail) {
-            throw new ValidationException
-                    (
+            throw new ValidationException (
                             "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
                                     " some_address@gmail.com"
                     );

@@ -33,7 +33,7 @@ public class UserController {
             throw new NullPointerException("Не корректная инициализация объекта типа \"User\"");
         }
 
-        log.debug("Получен ID: {}", userObject.getID());
+        log.debug("Получен ID: {}", userObject.getId());
         log.debug("Получен email: {}", userObject.getEmail());
         log.debug("Получен login: {}", userObject.getLogin());
         log.debug("Получено name: {}", userObject.getName());
@@ -57,13 +57,13 @@ public class UserController {
 
         user = new User();
 
-        user.setID(nextID());
+        user.setId(nextID());
         user.setEmail(userObject.getEmail());
         user.setLogin(user.validationLogin(userObject.getLogin()));
         user.setName(user.validationName(userObject.getName()));
         user.setBirthday(user.validationBirthday(userObject.getBirthday()));
 
-        userMap.put(user.getID(), user);
+        userMap.put(user.getId(), user);
 
         return user;
     }
@@ -75,17 +75,17 @@ public class UserController {
             throw new ValidationException("Не корректная инициализация объекта типа \"User\"");
         }
 
-        if (userObject.getID() == null) {
+        if (userObject.getId() == null) {
             throw new ValidationException("ID должен быть указан");
         }
 
-        log.debug("Получен ID: {}", userObject.getID());
+        log.debug("Получен ID: {}", userObject.getId());
         log.debug("Получен email: {}", userObject.getEmail().trim());
         log.debug("Получен login: {}", userObject.getLogin().trim());
         log.debug("Получено name: {}", userObject.getName().trim());
         log.debug("Получена birthdayDate: {}", userObject.getBirthday());
 
-        User oldUSer = userMap.get(userObject.getID());
+        User oldUSer = userMap.get(userObject.getId());
 
         if (oldUSer == null) {
             createUser(userObject);

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class User {
     private String login;
     private String name;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
+    //@JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate birthday = LocalDate.now();
 
     public LocalDate validationBirthday(LocalDate birthdayVal) throws NullPointerException, ValidationException {
@@ -79,9 +78,7 @@ public class User {
 
         if (valueIsBlank != -1) throw new ValidationException("Логин не может содержать пробелы");
 
-        String loginToLowerCase = userLogin.trim().toLowerCase();
-
-        return loginToLowerCase.substring(0, 1).toUpperCase().concat(loginToLowerCase.substring(1));
+        return userLogin.trim();
     }
 
     public String validationName(String userName) throws NullPointerException {
@@ -89,15 +86,14 @@ public class User {
         if (userName == null || userName.isEmpty()) {
 
             if (login != null && !login.isEmpty()) {
-                return getLogin();
+                return login;
 
             } else {
                 throw new NullPointerException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
             }
+
+        } else {
+            return userName.trim();
         }
-
-        String nameToLowerCase = userName.trim().toLowerCase();
-
-        return nameToLowerCase.substring(0, 1).toUpperCase().concat(nameToLowerCase.substring(1));
     }
 }

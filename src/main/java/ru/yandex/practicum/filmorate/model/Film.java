@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -30,7 +29,7 @@ public class Film {
     private String name;
     private String description;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
+    //@JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate releaseDate;
     private Integer duration;
 
@@ -40,11 +39,7 @@ public class Film {
             throw new ValidationException("Имя не может быть пустым");
         }
 
-        String nameToLowerCase = nameFilms.trim().toLowerCase();
-        String normalizeName = nameToLowerCase.substring(0, 1).toUpperCase().
-                concat(nameToLowerCase.substring(1));
-
-        return normalizeName;
+        return nameFilms.trim();
     }
 
     public String validationDescription(String filmDescription) throws ValidationException {

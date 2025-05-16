@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.event.Level;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -29,7 +28,6 @@ public class FilmController {
 
     @PostMapping
     public Object addFilm(@RequestBody @Valid Film filmObject) {
-        log.isEnabledForLevel(Level.DEBUG);
 
         if (filmObject == null) {
             throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
@@ -56,7 +54,7 @@ public class FilmController {
         film.setName(film.validationName(filmObject.getName()));
         film.setDescription(film.validationDescription(filmObject.getDescription()));
         film.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate()));
-        film.setDuration(filmObject.getDuration());
+        film.setDuration(film.validationDuration(filmObject.getDuration()));
 
         filmMap.put(film.getID(), film);
         return film;
@@ -64,7 +62,6 @@ public class FilmController {
 
     @PutMapping
     public Object updateFilm(@RequestBody @Valid Film filmObject) {
-        log.isEnabledForLevel(Level.DEBUG);
 
         if (filmObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
@@ -79,7 +76,8 @@ public class FilmController {
         Film oldFilm = filmMap.get(filmObject.getID());
 
         if (oldFilm == null) {
-            throw new NullPointerException("В коллекции нет данного фильма");
+            //throw new NullPointerException("В коллекции нет данного фильма");
+            addFilm(filmObject);
         }
 
         if (oldFilm.getID() != null && filmMap.containsKey(filmObject.getID())) {
@@ -94,8 +92,7 @@ public class FilmController {
                 throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
             }
 
-            oldFilm.setName(film.validationName(!filmObject.getName().equalsIgnoreCase(oldFilm.getName()) ?
-                    filmObject.getName() : oldFilm.getName()));
+            oldFilm.setName(film.validationName(filmObject.getName()));
 
             oldFilm.setDescription(film.validationDescription(!filmObject.getDescription().
                     equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
@@ -113,9 +110,9 @@ public class FilmController {
     @GetMapping
     public Collection<Film> getFilms() {
 
-        if (filmMap.isEmpty()) {
+        /*if (filmMap.isEmpty()) {
             throw new NullPointerException("В коллекцию фильмов еще не добавлен не один фильм");
-        }
+        }*/
 
         return filmMap.values();
     }
@@ -123,9 +120,9 @@ public class FilmController {
     @DeleteMapping
     public void deleteAllFilms() {
 
-        if (filmMap.isEmpty()) {
+        /*if (filmMap.isEmpty()) {
             throw new NullPointerException("Коллекция фильмов уже пустая");
-        }
+        }*/
 
         filmMap.clear();
     }

@@ -29,7 +29,7 @@ class UserTest {
 
     @Test
     public void checkLoginForCorrectness() {
-        String correctedLogin = "Aleks";
+        String correctedLogin = "aleks";
 
         user.setLogin(user.validationLogin(correctedLogin));
         Assertions.assertEquals(correctedLogin, user.getLogin());

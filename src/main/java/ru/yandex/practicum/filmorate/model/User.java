@@ -58,10 +58,9 @@ public class User {
         }
 
         if (!correctedEmail) {
-            throw new ValidationException (
+            throw new ValidationException(
                             "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
-                                    " some_address@gmail.com"
-                    );
+                                    " some_address@gmail.com");
         } else {
             return mail.trim();
         }

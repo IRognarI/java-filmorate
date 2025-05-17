@@ -11,12 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class User {
     private Long id;
+
     @Email(message = "Не корректный формат email адреса")
     private String email;
     private String login;
     private String name;
-
-    //@JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate birthday = LocalDate.now();
 
     public LocalDate validationBirthday(LocalDate birthdayVal) throws NullPointerException, ValidationException {
@@ -59,8 +58,8 @@ public class User {
 
         if (!correctedEmail) {
             throw new ValidationException(
-                            "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
-                                    " some_address@gmail.com");
+                    "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
+                            " some_address@gmail.com");
         } else {
             return mail.trim();
         }

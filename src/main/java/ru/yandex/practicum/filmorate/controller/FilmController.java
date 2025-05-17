@@ -17,17 +17,8 @@ public class FilmController {
     private Film film;
     private final Map<Long, Film> filmMap = new HashMap<>();
 
-    private Long nextID() {
-        long id = filmMap.keySet()
-                .stream()
-                .mapToLong(i -> i)
-                .max()
-                .orElse(0);
-        return ++id;
-    }
-
     @PostMapping
-    public Object addFilm(@RequestBody @Valid Film filmObject) {
+    public Film addFilm(@RequestBody @Valid Film filmObject) {
 
         if (filmObject == null) {
             throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
@@ -61,7 +52,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Object updateFilm(@RequestBody @Valid Film filmObject) {
+    public Film updateFilm(@RequestBody @Valid Film filmObject) {
 
         if (filmObject == null) {
             throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
@@ -76,7 +67,6 @@ public class FilmController {
         Film oldFilm = filmMap.get(filmObject.getId());
 
         if (oldFilm == null) {
-            //throw new NullPointerException("В коллекции нет данного фильма");
             addFilm(filmObject);
         }
 
@@ -109,21 +99,20 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> getFilms() {
-
-        /*if (filmMap.isEmpty()) {
-            throw new NullPointerException("В коллекцию фильмов еще не добавлен не один фильм");
-        }*/
-
         return filmMap.values();
     }
 
     @DeleteMapping
     public void deleteAllFilms() {
-
-        /*if (filmMap.isEmpty()) {
-            throw new NullPointerException("Коллекция фильмов уже пустая");
-        }*/
-
         filmMap.clear();
+    }
+
+    private Long nextID() {
+        long id = filmMap.keySet()
+                .stream()
+                .mapToLong(i -> i)
+                .max()
+                .orElse(0);
+        return ++id;
     }
 }

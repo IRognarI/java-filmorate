@@ -16,16 +16,6 @@ public class UserController {
     private final Map<Long, User> userMap = new HashMap<>();
     private User user;
 
-
-    private long nextID() {
-        long id = userMap.keySet()
-                .stream()
-                .mapToLong(k -> k)
-                .max()
-                .orElse(0);
-        return ++id;
-    }
-
     @PostMapping
     public User createUser(@RequestBody @Valid User userObject) {
 
@@ -124,19 +114,20 @@ public class UserController {
 
     @GetMapping
     public Collection<User> getUsers() {
-
-        /*if (userMap.isEmpty()) {
-            throw new NullPointerException("Список пользователей пуст");
-        }*/
         return userMap.values();
     }
 
     @DeleteMapping
     public void deleteUsers() {
-
-        /*if (userMap.isEmpty()) {
-            throw new NullPointerException("Список пользователей пуст");
-        }*/
         userMap.clear();
+    }
+
+    private long nextID() {
+        long id = userMap.keySet()
+                .stream()
+                .mapToLong(k -> k)
+                .max()
+                .orElse(0);
+        return ++id;
     }
 }

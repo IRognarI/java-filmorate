@@ -28,8 +28,6 @@ public class Film {
     private Long id;
     private String name;
     private String description;
-
-    //@JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate releaseDate;
     private Integer duration;
 

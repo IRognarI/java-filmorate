@@ -35,7 +35,6 @@ public class User {
         return birthdayVal;
     }
 
-    @Deprecated(forRemoval = true)
     public String validationEmail(String mail) throws NullPointerException, ValidationException {
 
         if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");

@@ -35,35 +35,6 @@ public class User {
         return birthdayVal;
     }
 
-    public String validationEmail(String mail) throws NullPointerException, ValidationException {
-
-        if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");
-
-        boolean correctedEmail = false;
-
-        int valueIsBlank = mail.trim().indexOf(" ");
-
-        if (valueIsBlank != -1) throw new ValidationException("Email адрес не может содержать пробелы");
-
-        char[] valueChars = mail.trim().toCharArray();
-
-        for (char ch : valueChars) {
-
-            if (ch == '@') {
-                correctedEmail = true;
-                break;
-            }
-        }
-
-        if (!correctedEmail) {
-            throw new ValidationException(
-                    "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
-                            " some_address@gmail.com");
-        } else {
-            return mail.trim();
-        }
-    }
-
     public String validationLogin(String userLogin) throws NullPointerException, ValidationException {
 
         if (userLogin == null || userLogin.isEmpty()) {

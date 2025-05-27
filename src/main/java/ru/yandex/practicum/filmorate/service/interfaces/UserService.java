@@ -6,11 +6,19 @@ import java.util.*;
 
 public interface UserService {
 
-    void addFriends(long userId, long friendId);
+    User createUser(User userObject);
 
-    void deleteFromFriends(long userId, long friendId);
+    User updateUser(User userObject);
 
-    Collection<User> commonFriends(long userId, long otherId);
+    Collection<User> getUsers();
 
-    Collection<User> usersFriends(long userId);
+    void deleteUsers();
+
+    void addFriends(Long userId, Long friendId);
+
+    void deleteFromFriends(Long userId, Long friendId);
+
+    Collection<User> commonFriends(Long userId, Long otherId);
+
+    Collection<User> usersFriends(Long userId);
 }

@@ -6,9 +6,17 @@ import java.util.*;
 
 public interface FilmService {
 
-    void addLike(long filmId, long userId);
+    Film addFilm(Film filmObject);
 
-    void removeLike(long filmId, long userId);
+    Film updateFilm(Film filmObject);
 
-    Collection<Film> topOfBestFilms(int count);
+    Collection<Film> getFilms();
+
+    void deleteAllFilms();
+
+    void addLike(Long filmId, Long userId);
+
+    void removeLike(Long filmId, Long userId);
+
+    Collection<Film> topOfBestFilms(Integer count);
 }

@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserServiceImpl;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.interfaces.UserService;
 
 import java.util.*;
 
@@ -13,26 +13,53 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final InMemoryUserStorage inMemoryUserStorage;
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @PostMapping
     public User createUser(@RequestBody @Valid User userObject) {
-        return inMemoryUserStorage.createUser(userObject);
+        return userService.createUser(userObject);
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User userObject) {
-        return inMemoryUserStorage.updateUser(userObject);
+        return userService.updateUser(userObject);
+    }
+
+    @PutMapping("/{id}/friends{friendId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addFriends(@PathVariable(name = "id") Long userId,
+                           @PathVariable(name = "friendId") Long friendId) {
+
+        userService.addFriends(userId, friendId);
     }
 
     @GetMapping
     public Collection<User> getUsers() {
-        return inMemoryUserStorage.getUsers();
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> usersFriends(Long userId) {
+        return userService.usersFriends(userId);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public Collection<User> commonFriends(@PathVariable(name = "id") Long userId,
+                                          @PathVariable(name = "otherId") Long otherId) {
+
+        return userService.commonFriends(userId, otherId);
     }
 
     @DeleteMapping
     public void deleteUsers() {
-        inMemoryUserStorage.deleteUsers();
+        userService.deleteUsers();
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFromFriends(@PathVariable(name = "id") Long userId,
+                                  @PathVariable(name = "friendId") Long friendId) {
+
+        userService.deleteFromFriends(userId, friendId);
     }
 }

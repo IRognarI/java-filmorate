@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ import java.util.*;
 @Component
 @Repository
 public class InMemoryUserStorage implements UserStorage {
+
+    @Getter
     private final Map<Long, User> userMap = new HashMap<>();
     private User user;
 

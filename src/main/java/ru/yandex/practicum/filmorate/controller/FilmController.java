@@ -4,8 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmServiceImpl;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.service.interfaces.FilmService;
 
 import java.util.*;
 
@@ -13,26 +12,25 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
-    private final InMemoryFilmStorage inMemoryFilmStorage;
-    private final FilmServiceImpl filmService;
+    private final FilmService filmService;
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film filmObject) {
-        return inMemoryFilmStorage.addFilm(filmObject);
+        return filmService.addFilm(filmObject);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film filmObject) {
-        return inMemoryFilmStorage.updateFilm(filmObject);
+        return filmService.updateFilm(filmObject);
     }
 
     @GetMapping
     public Collection<Film> getFilms() {
-        return inMemoryFilmStorage.getFilms();
+        return filmService.getFilms();
     }
 
     @DeleteMapping
     public void deleteAllFilms() {
-        inMemoryFilmStorage.deleteAllFilms();
+        filmService.deleteAllFilms();
     }
 }

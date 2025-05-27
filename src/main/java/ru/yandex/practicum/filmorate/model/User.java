@@ -1,16 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 public class User {
     private Long id;
+
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    private final Set<Long> friends = new HashSet<>();
 
     @Email(message = "Не корректный формат email адреса")
     private String email;

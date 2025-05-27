@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmServiceImpl;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.*;
@@ -12,8 +13,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
-
     private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final FilmServiceImpl filmService;
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film filmObject) {

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserServiceImpl;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
     private final InMemoryUserStorage inMemoryUserStorage;
+    private final UserServiceImpl userService;
 
     @PostMapping
     public User createUser(@RequestBody @Valid User userObject) {

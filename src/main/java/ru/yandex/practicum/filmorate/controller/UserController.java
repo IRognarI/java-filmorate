@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.interfaces.UserService;
@@ -25,8 +24,7 @@ public class UserController {
         return userService.updateUser(userObject);
     }
 
-    @PutMapping("/{id}/friends{friendId}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/{id}/friends/{friendId}")
     public void addFriends(@PathVariable(name = "id") Long userId,
                            @PathVariable(name = "friendId") Long friendId) {
 
@@ -39,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> usersFriends(Long userId) {
+    public Collection<User> usersFriends(@PathVariable(name = "id") Long userId) {
         return userService.usersFriends(userId);
     }
 
@@ -56,7 +54,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFromFriends(@PathVariable(name = "id") Long userId,
                                   @PathVariable(name = "friendId") Long friendId) {
 

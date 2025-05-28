@@ -23,7 +23,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User createUser(User userObject) throws ValidationException, DuplicatedException {
         if (userObject == null) {
-            throw new ValidationException("Не корректная инициализация объекта типа \"User\"");
+            throw new ValidationException("Не достаточно данных для регистрации пользователя пользователя");
         }
 
         log.debug("Получен ID: {}", userObject.getId());
@@ -62,9 +62,9 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(User userObject) throws ValidationException, DuplicatedException {
+    public User updateUser(User userObject) throws DuplicatedException, ValidationException {
         if (userObject == null) {
-            throw new ValidationException("Не корректная инициализация объекта типа \"User\"");
+            throw new ValidationException("Не достаточно данных для обновления пользователя");
         }
 
         if (userObject.getId() == null) {

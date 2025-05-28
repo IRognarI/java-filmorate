@@ -17,7 +17,7 @@ public class User {
 
     @JsonIgnore
     @Getter
-    private final Set<Long> friends = new HashSet<>();
+    private final Set<User> friends = new HashSet<>();
 
     @Email(message = "Не корректный формат email адреса")
     private String email;

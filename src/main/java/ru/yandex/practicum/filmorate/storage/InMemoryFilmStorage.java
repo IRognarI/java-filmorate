@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
@@ -23,7 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film addFilm(Film filmObject) throws ValidationException, DuplicatedException {
         if (filmObject == null) {
-            throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
+            throw new ValidationException("Не достаточно данных для добавления фильма");
         }
 
         boolean nameFilmExists = filmMap.values()
@@ -54,9 +55,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film filmObject) throws ValidationException, DuplicatedException {
+    public Film updateFilm(Film filmObject) throws NotFoundException, DuplicatedException {
         if (filmObject == null) {
-            throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
+            throw new NotFoundException("Не достаточно данных для обновления фильма");
         }
 
         log.debug("Получено ID: " + filmObject.getId());

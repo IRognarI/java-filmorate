@@ -20,8 +20,8 @@ class UserTest {
         String loginEmpty = "";
         String loginWithBlank = "Ale ks";
 
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationLogin(loginEmpty));
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationLogin(null));
+        Assertions.assertThrows(ValidationException.class, () -> user.validationLogin(loginEmpty));
+        Assertions.assertThrows(ValidationException.class, () -> user.validationLogin(null));
         Assertions.assertThrows(ValidationException.class, () -> user.validationLogin(loginWithBlank));
 
         Assertions.assertNull(user.getEmail());
@@ -46,7 +46,7 @@ class UserTest {
 
     @Test
     public void checkingNameAndLoginForEmptiness() {
-        Assertions.assertThrows(NullPointerException.class, () -> user.validationName(""));
+        Assertions.assertThrows(ValidationException.class, () -> user.validationName(""));
         Assertions.assertNull(user.getName());
         Assertions.assertNull(user.getLogin());
     }

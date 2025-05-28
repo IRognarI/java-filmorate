@@ -21,7 +21,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private Film film;
 
     @Override
-    public Film addFilm(Film filmObject) {
+    public Film addFilm(Film filmObject) throws ValidationException, DuplicatedException {
         if (filmObject == null) {
             throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
         }
@@ -54,9 +54,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film filmObject) {
+    public Film updateFilm(Film filmObject) throws ValidationException, DuplicatedException {
         if (filmObject == null) {
-            throw new NullPointerException("Не корректная инициализация объекта типа \"Film\"");
+            throw new ValidationException("Не корректная инициализация объекта типа \"Film\"");
         }
 
         log.debug("Получено ID: " + filmObject.getId());

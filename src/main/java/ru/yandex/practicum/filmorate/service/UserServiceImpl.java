@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Primary
@@ -38,7 +40,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriends(Long userId, Long friendId) {
+    public void addFriends(Long userId, Long friendId) throws ValidationException, NotFoundException {
+
+        log.debug("Получены данные: {}, {}", userId, friendId);
 
         if (userId == null) throw new ValidationException("Укажите ваш ID");
 
@@ -59,14 +63,31 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userStorage.getUserMap().get(userId);
+
+        boolean userNotNull = user != null;
+        log.debug("Объект user не null: {}", userNotNull);
+
         User targetUser = userStorage.getUserMap().get(friendId);
+
+        boolean targetUserNotNull = targetUser != null;
+        log.debug("Объект targetUser не null: {}", targetUser);
+
+        log.info("Кол-во друзей у user до добавления нового [{}]" +
+                        "\nКол-во друзей у targetUser до добавления нового [{}]", user.getFriends().size(),
+                targetUser.getFriends().size());
 
         user.getFriends().add(friendId);
         targetUser.getFriends().add(userId);
+
+        log.info("Кол-во друзей у user после добавления нового [{}]" +
+                        "\nКол-во друзей у targetUser после добавления нового [{}]", user.getFriends().size(),
+                targetUser.getFriends().size());
     }
 
     @Override
-    public void deleteFromFriends(Long userId, Long friendId) {
+    public void deleteFromFriends(Long userId, Long friendId) throws ValidationException, NotFoundException {
+
+        log.debug("Полученные данные: {}, {}", userId, friendId);
 
         if (userId == null) throw new ValidationException("Укажите ваш ID");
 
@@ -86,14 +107,31 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userStorage.getUserMap().get(userId);
+
+        boolean userNotNull = user != null;
+        log.debug("Объект user не null: {}", userNotNull);
+
         User targetUser = userStorage.getUserMap().get(friendId);
+
+        boolean targetUserNotNull = targetUser != null;
+        log.debug("Объект targetUser не null: {}", targetUser);
+
+        log.info("Кол-во друзей у user до удаления [{}]" +
+                        "\nКол-во друзей у targetUser до удаления [{}]", user.getFriends().size(),
+                targetUser.getFriends().size());
 
         user.getFriends().remove(targetUser.getId());
         targetUser.getFriends().remove(user.getId());
+
+        log.info("Кол-во друзей у user после удаления [{}]" +
+                        "\nКол-во друзей у targetUser после удаления [{}]", user.getFriends().size(),
+                targetUser.getFriends().size());
     }
 
     @Override
-    public Collection<User> commonFriends(Long userId, Long otherId) {
+    public Collection<User> commonFriends(Long userId, Long otherId) throws ValidationException, NotFoundException {
+
+        log.debug("Полученные данные: {}, {}", userId, otherId);
 
         if (userId == null) throw new ValidationException("Укажите ID пользователя");
 
@@ -112,7 +150,14 @@ public class UserServiceImpl implements UserService {
         }
 
         User firstUser = userStorage.getUserMap().get(userId);
+
+        boolean firstUserNotNull = firstUser != null;
+        log.debug("Объект firstUser не null: {}", firstUserNotNull);
+
         User secondUser = userStorage.getUserMap().get(otherId);
+
+        boolean secondUserNotNull = secondUser != null;
+        log.debug("Объект secondUser не null: {}", secondUserNotNull);
 
         Collection<User> commonFriends = new ArrayList<>();
 
@@ -136,13 +181,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<User> usersFriends(Long userId) {
+    public Collection<User> usersFriends(Long userId) throws ValidationException, NotFoundException {
+
+        log.debug("Полученное ID пользователя: {}", userId);
 
         if (userId == null) throw new ValidationException("Укажите ID пользователя");
 
         if (userId <= 0) throw new ValidationException("ID не может быть [" + userId + "]");
 
         User user = userStorage.getUserMap().get(userId);
+
+        boolean userNotNull = user != null;
+        log.debug("Объект user не null: {}", userNotNull);
 
         Collection<User> friends = new ArrayList<>();
 
@@ -155,6 +205,11 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+
+        if (friends.isEmpty()) {
+            throw new NotFoundException("Друзья не найдены");
+        }
+
         return friends.stream().sorted(Comparator.comparing(User::getName)).toList();
     }
 }

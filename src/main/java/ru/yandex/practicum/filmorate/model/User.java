@@ -25,10 +25,10 @@ public class User {
     private String name;
     private LocalDate birthday = LocalDate.now();
 
-    public LocalDate validationBirthday(LocalDate birthdayVal) throws NullPointerException, ValidationException {
+    public LocalDate validationBirthday(LocalDate birthdayVal) throws ValidationException {
 
         if (birthdayVal == null) {
-            throw new NullPointerException("Дата рождения указана не корректно");
+            throw new ValidationException("Дата рождения указана не корректно");
         }
 
         if (birthdayVal.isAfter(birthday)) {
@@ -42,10 +42,10 @@ public class User {
         return birthdayVal;
     }
 
-    public String validationLogin(String userLogin) throws NullPointerException, ValidationException {
+    public String validationLogin(String userLogin) throws ValidationException {
 
         if (userLogin == null || userLogin.isEmpty()) {
-            throw new NullPointerException("Логин не может быть пустым");
+            throw new ValidationException("Логин не может быть пустым");
         }
 
         int valueIsBlank = userLogin.trim().indexOf(" ");
@@ -55,7 +55,7 @@ public class User {
         return userLogin.trim();
     }
 
-    public String validationName(String userName) throws NullPointerException {
+    public String validationName(String userName) throws ValidationException {
 
         if (userName == null || userName.isEmpty()) {
 
@@ -63,7 +63,7 @@ public class User {
                 return login;
 
             } else {
-                throw new NullPointerException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
+                throw new ValidationException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
             }
 
         } else {

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Primary
@@ -40,7 +42,9 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Long removeLike(Long filmId, Long userId) {
+    public Long removeLike(Long filmId, Long userId) throws ValidationException, NotFoundException {
+
+        log.debug("Получены данные{},{}", filmId, userId);
 
         if (filmId == null) throw new ValidationException("Укажите ID фильма");
 
@@ -59,6 +63,9 @@ public class FilmServiceImpl implements FilmService {
         }
 
         Film film = filmStorage.getFilmMap().get(filmId);
+
+        boolean filmNotNull = film != null;
+        log.debug("Объект Film не null: {}", filmNotNull);
 
         boolean likeExists = film.getUsersWhoLikedIt()
                 .stream()
@@ -68,13 +75,19 @@ public class FilmServiceImpl implements FilmService {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не успел оценить фильм");
         }
 
+        log.debug("Было лайков: {}", film.getLikes());
+
         film.getUsersWhoLikedIt().remove(userId);
+
+        log.debug("\nСтало лайков: {}", film.getLikes());
 
         return film.getLikes();
     }
 
     @Override
-    public Long addLike(Long filmId, Long userId) {
+    public Long addLike(Long filmId, Long userId) throws ValidationException, NotFoundException {
+
+        log.debug("Получены данные{},{}", filmId, userId);
 
         if (filmId == null) throw new ValidationException("Укажите ID фильма");
 
@@ -94,13 +107,22 @@ public class FilmServiceImpl implements FilmService {
 
         Film film = filmStorage.getFilmMap().get(filmId);
 
+        boolean filmNotNull = film != null;
+        log.debug("Объект Film не null: {}", filmNotNull);
+
+        log.debug("Было лайков: {}", film.getLikes());
+
         film.getUsersWhoLikedIt().add(userId);
+
+        log.debug("\nСтало лайков: {}", film.getLikes());
 
         return film.getLikes();
     }
 
     @Override
     public Collection<Film> topOfBestFilms(Integer count) {
+
+        log.info("Полученное кол-во фильмов [{}]", count);
 
         return filmStorage.getFilmMap().values()
                 .stream()

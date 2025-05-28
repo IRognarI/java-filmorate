@@ -24,13 +24,32 @@ public class FilmController {
         return filmService.updateFilm(filmObject);
     }
 
+    @PutMapping("/{id}/like/{userId}")
+    public Long addLike(@PathVariable(name = "id") Long filmId,
+                        @PathVariable(name = "userId") Long userId) {
+
+        return filmService.addLike(filmId, userId);
+    }
+
     @GetMapping
     public Collection<Film> getFilms() {
         return filmService.getFilms();
     }
 
+    @GetMapping("/popular")
+    public Collection<Film> topOfBestFilms(@RequestParam(required = false, defaultValue = "10") Integer count) {
+        return filmService.topOfBestFilms(count);
+    }
+
     @DeleteMapping
     public void deleteAllFilms() {
         filmService.deleteAllFilms();
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Long removeLike(@PathVariable(name = "id") Long filmId,
+                           @PathVariable(name = "userId") Long userId) {
+
+        return filmService.removeLike(filmId, userId);
     }
 }

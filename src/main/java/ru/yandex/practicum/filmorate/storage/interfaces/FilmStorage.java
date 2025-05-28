@@ -13,4 +13,6 @@ public interface FilmStorage {
     Collection<Film> getFilms();
 
     void deleteAllFilms();
+
+    Map<Long, Film> getFilmMap();
 }

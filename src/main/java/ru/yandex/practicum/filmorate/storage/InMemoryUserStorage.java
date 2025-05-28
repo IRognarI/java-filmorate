@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -13,7 +13,7 @@ import java.util.*;
 
 @Slf4j
 @Component
-@Repository
+@Primary
 public class InMemoryUserStorage implements UserStorage {
 
     @Getter

@@ -14,9 +14,9 @@ public interface FilmService {
 
     void deleteAllFilms();
 
-    void addLike(Long filmId, Long userId);
+    Long addLike(Long filmId, Long userId);
 
-    void removeLike(Long filmId, Long userId);
+    Long removeLike(Long filmId, Long userId);
 
     Collection<Film> topOfBestFilms(Integer count);
 }

@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
@@ -27,7 +24,7 @@ public class Film {
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @JsonIgnore
-    @Getter(AccessLevel.NONE)
+    @Getter
     private final Set<Long> usersWhoLikedIt = new HashSet<>();
 
     private Long id;
@@ -36,9 +33,8 @@ public class Film {
     private LocalDate releaseDate;
     private Integer duration;
 
-    public long getLikes() {
-        return usersWhoLikedIt.size();
-    }
+    @Setter(AccessLevel.NONE)
+    private Long likes = getCountLikes();
 
     public String validationName(String nameFilms) throws ValidationException {
 
@@ -85,5 +81,9 @@ public class Film {
         }
 
         return filmDuration;
+    }
+
+    private long getCountLikes() {
+        return usersWhoLikedIt.size();
     }
 }

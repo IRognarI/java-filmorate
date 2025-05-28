@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.interfaces.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 
@@ -15,26 +15,26 @@ import java.util.*;
 @RequiredArgsConstructor
 @Primary
 public class UserServiceImpl implements UserService {
-    private final InMemoryUserStorage inMemoryUserStorage;
+    private final UserStorage userStorage;
 
     @Override
     public User createUser(User userObject) {
-        return inMemoryUserStorage.createUser(userObject);
+        return userStorage.createUser(userObject);
     }
 
     @Override
     public User updateUser(User userObject) {
-        return inMemoryUserStorage.updateUser(userObject);
+        return userStorage.updateUser(userObject);
     }
 
     @Override
     public Collection<User> getUsers() {
-        return inMemoryUserStorage.getUsers();
+        return userStorage.getUsers();
     }
 
     @Override
     public void deleteUsers() {
-        inMemoryUserStorage.deleteUsers();
+        userStorage.deleteUsers();
     }
 
     @Override
@@ -49,17 +49,17 @@ public class UserServiceImpl implements UserService {
 
         if (friendId <= 0) throw new ValidationException("ID пользователя не может быть [" + userId + "]");
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(userId)) {
+        if (!userStorage.getUserMap().containsKey(userId)) {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(friendId)) {
+        if (!userStorage.getUserMap().containsKey(friendId)) {
             throw new NotFoundException("Не возможно добавить в друзья! Пользователь с ID [" + friendId + "]" +
                     " - не существует");
         }
 
-        User user = inMemoryUserStorage.getUserMap().get(userId);
-        User targetUser = inMemoryUserStorage.getUserMap().get(friendId);
+        User user = userStorage.getUserMap().get(userId);
+        User targetUser = userStorage.getUserMap().get(friendId);
 
         user.getFriends().add(friendId);
         targetUser.getFriends().add(userId);
@@ -77,16 +77,16 @@ public class UserServiceImpl implements UserService {
 
         if (friendId <= 0) throw new ValidationException("ID пользователя не может быть [" + friendId + "]");
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(userId)) {
+        if (!userStorage.getUserMap().containsKey(userId)) {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(friendId)) {
+        if (!userStorage.getUserMap().containsKey(friendId)) {
             throw new NotFoundException("Пользователя с ID [" + friendId + "] - не существует");
         }
 
-        User user = inMemoryUserStorage.getUserMap().get(userId);
-        User targetUser = inMemoryUserStorage.getUserMap().get(friendId);
+        User user = userStorage.getUserMap().get(userId);
+        User targetUser = userStorage.getUserMap().get(friendId);
 
         user.getFriends().remove(targetUser.getId());
         targetUser.getFriends().remove(user.getId());
@@ -103,27 +103,27 @@ public class UserServiceImpl implements UserService {
 
         if (otherId <= 0) throw new ValidationException("ID пользователя не может быть [" + userId + "]");
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(userId)) {
+        if (!userStorage.getUserMap().containsKey(userId)) {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
 
-        if (!inMemoryUserStorage.getUserMap().containsKey(otherId)) {
+        if (!userStorage.getUserMap().containsKey(otherId)) {
             throw new NotFoundException("Пользователь с ID [" + otherId + "] - не существует");
         }
 
-        User firstUser = inMemoryUserStorage.getUserMap().get(userId);
-        User secondUser = inMemoryUserStorage.getUserMap().get(otherId);
+        User firstUser = userStorage.getUserMap().get(userId);
+        User secondUser = userStorage.getUserMap().get(otherId);
 
         Collection<User> commonFriends = new ArrayList<>();
 
-        for (Long id : inMemoryUserStorage.getUserMap().keySet()) {
+        for (Long id : userStorage.getUserMap().keySet()) {
 
             for (Long firstUserId : firstUser.getFriends()) {
 
                 for (Long secondUserId : secondUser.getFriends()) {
 
                     if (id.equals(firstUserId) && id.equals(secondUserId)) {
-                        commonFriends.add(inMemoryUserStorage.getUserMap().get(id));
+                        commonFriends.add(userStorage.getUserMap().get(id));
                     }
                 }
             }
@@ -142,16 +142,16 @@ public class UserServiceImpl implements UserService {
 
         if (userId <= 0) throw new ValidationException("ID не может быть [" + userId + "]");
 
-        User user = inMemoryUserStorage.getUserMap().get(userId);
+        User user = userStorage.getUserMap().get(userId);
 
         Collection<User> friends = new ArrayList<>();
 
-        for (Long id : inMemoryUserStorage.getUserMap().keySet()) {
+        for (Long id : userStorage.getUserMap().keySet()) {
 
             for (Long friendId : user.getFriends()) {
 
                 if (id.equals(friendId)) {
-                    friends.add(inMemoryUserStorage.getUserMap().get(friendId));
+                    friends.add(userStorage.getUserMap().get(friendId));
                 }
             }
         }

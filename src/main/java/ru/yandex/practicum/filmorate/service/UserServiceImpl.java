@@ -60,8 +60,8 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с id [" + friendId + "] - не найден");
         }
 
-        firstUser.getFriends().add(secondUser);
-        secondUser.getFriends().add(firstUser);
+        firstUser.getFriends().add(secondUser.getId());
+        secondUser.getFriends().add(firstUser.getId());
     }
 
     @Override
@@ -87,10 +87,26 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователя с ID [" + otherId + "] - не существует");
         }
 
-        Set<User> userSet = new TreeSet<>(firstUser.getFriends());
-        userSet.retainAll(firstUser.getFriends());
+        Set<Long> userSet = new HashSet<>(firstUser.getFriends());
+        userSet.retainAll(secondUser.getFriends());
 
-        return userSet;
+        Collection<User> commonFriends = new ArrayList<>();
+
+        for (Long usersID : userStorage.getUserMap().keySet()) {
+
+            for (Long targetID : userSet) {
+
+                if (usersID.equals(targetID)) {
+                    commonFriends.add(userStorage.getUserMap().get(targetID));
+                }
+            }
+        }
+
+        if (commonFriends.isEmpty()) {
+            throw new NotFoundException("Общие друзья не найдены");
+        }
+
+        return commonFriends;
     }
 
     @Override
@@ -116,8 +132,8 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с id [" + friendId + "] - не найден");
         }
 
-        firstUser.getFriends().remove(secondUser);
-        secondUser.getFriends().remove(firstUser);
+        firstUser.getFriends().remove(secondUser.getId());
+        secondUser.getFriends().remove(firstUser.getId());
     }
 
     @Override
@@ -133,6 +149,18 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
 
-        return user.getFriends();
+        Collection<User> usersFriends = new ArrayList<>();
+
+        for (Long usersID : userStorage.getUserMap().keySet()) {
+
+            for (Long friendsID : user.getFriends()) {
+
+                if (usersID.equals(friendsID)) {
+                    usersFriends.add(userStorage.getUserMap().get(friendsID));
+                }
+            }
+        }
+
+        return usersFriends;
     }
 }

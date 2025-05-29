@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -12,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Primary
@@ -42,45 +40,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addFriends(Long userId, Long friendId) throws ValidationException, NotFoundException {
 
-        log.debug("Получены данные: {}, {}", userId, friendId);
-
-        if (userId == null) throw new ValidationException("Укажите ваш ID");
-
-        if (userId <= 0) throw new ValidationException("ID не может быть [" + userId + "]");
-
-        if (friendId == null) throw new ValidationException("Укажите ID пользователя," +
-                "которого желаете добавить в друзья");
-
-        if (friendId <= 0) throw new ValidationException("ID пользователя не может быть [" + userId + "]");
-
-        if (!userStorage.getUserMap().containsKey(userId)) {
-            throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
+        if (userId == null || friendId == null) {
+            throw new ValidationException("Id пользователей должны быть указаны");
         }
 
-        if (!userStorage.getUserMap().containsKey(friendId)) {
-            throw new NotFoundException("Не возможно добавить в друзья! Пользователь с ID [" + friendId + "]" +
-                    " - не существует");
+        if (userId <= 0 || friendId <= 0) {
+            throw new ValidationException("Id пользователй должны быть больше 0");
         }
 
-        User user = userStorage.getUserMap().get(userId);
-        User targetUser = userStorage.getUserMap().get(friendId);
+        User firstUser = userStorage.getUserMap().get(userId);
 
-        log.info("Кол-во друзей у user до добавления нового [{}]" +
-                        "\nКол-во друзей у targetUser до добавления нового [{}]", user.getFriends().size(),
-                targetUser.getFriends().size());
+        if (firstUser == null) {
+            throw new NotFoundException("Пользователь с id [" + userId + "] - не найден");
+        }
 
-        user.getFriends().add(targetUser);
-        targetUser.getFriends().add(user);
+        User secondUser = userStorage.getUserMap().get(friendId);
 
-        log.info("Кол-во друзей у user после добавления нового [{}]" +
-                        "\nКол-во друзей у targetUser после добавления нового [{}]", user.getFriends().size(),
-                targetUser.getFriends().size());
+        if (secondUser == null) {
+            throw new NotFoundException("Пользователь с id [" + friendId + "] - не найден");
+        }
+
+        firstUser.getFriends().add(secondUser);
+        secondUser.getFriends().add(firstUser);
     }
 
     @Override
     public Collection<User> commonFriends(Long userId, Long otherId) throws ValidationException, NotFoundException {
-
-        log.debug("Полученные данные: {}, {}", userId, otherId);
 
         if (userId == null || otherId == null) {
             throw new ValidationException("ID пользователей должны быть указаны");
@@ -111,44 +96,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteFromFriends(Long userId, Long friendId) throws ValidationException, NotFoundException {
 
-        log.debug("Полученные данные: {}, {}", userId, friendId);
-
-        if (userId == null) throw new ValidationException("Укажите ваш ID");
-
-        if (userId <= 0) throw new ValidationException("ID не может быть [" + userId + "]");
-
-        if (friendId == null) throw new ValidationException("Укажите ID пользователя," +
-                "которого желаете удалить из друзей");
-
-        if (friendId <= 0) throw new ValidationException("ID пользователя не может быть [" + friendId + "]");
-
-        if (!userStorage.getUserMap().containsKey(userId)) {
-            throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
+        if (userId == null || friendId == null) {
+            throw new ValidationException("Id пользователей должен быть указан");
         }
 
-        if (!userStorage.getUserMap().containsKey(friendId)) {
-            throw new NotFoundException("Пользователя с ID [" + friendId + "] - не существует");
+        if (userId <= 0 || friendId <= 0) {
+            throw new ValidationException("Id пользователей должен быть больше 0");
         }
 
-        User user = userStorage.getUserMap().get(userId);
-        User targetUser = userStorage.getUserMap().get(friendId);
+        User firstUser = userStorage.getUserMap().get(userId);
 
-        log.info("Кол-во друзей у user до удаления [{}]" +
-                        "\nКол-во друзей у targetUser до удаления [{}]", user.getFriends().size(),
-                targetUser.getFriends().size());
+        if (firstUser == null) {
+            throw new NotFoundException("Пользователь с id [" + userId + "] - не найден");
+        }
 
-        user.getFriends().remove(targetUser.getId());
-        targetUser.getFriends().remove(user.getId());
+        User secondUser = userStorage.getUserMap().get(friendId);
 
-        log.info("Кол-во друзей у user после удаления [{}]" +
-                        "\nКол-во друзей у targetUser после удаления [{}]", user.getFriends().size(),
-                targetUser.getFriends().size());
+        if (secondUser == null) {
+            throw new NotFoundException("Пользователь с id [" + friendId + "] - не найден");
+        }
+
+        firstUser.getFriends().remove(secondUser);
+        secondUser.getFriends().remove(firstUser);
     }
 
     @Override
     public Collection<User> usersFriends(Long userId) throws ValidationException, NotFoundException {
-
-        log.debug("Полученное ID пользователя: {}", userId);
 
         if (userId == null) throw new ValidationException("Укажите ID пользователя");
 
@@ -159,6 +132,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
+
         return user.getFriends();
     }
 }

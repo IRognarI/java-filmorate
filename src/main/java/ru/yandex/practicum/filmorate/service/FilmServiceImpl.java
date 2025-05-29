@@ -1,19 +1,18 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.interfaces.FilmService;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Primary
@@ -44,42 +43,31 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Long removeLike(Long filmId, Long userId) throws ValidationException, NotFoundException {
 
-        log.debug("Получены данные{},{}", filmId, userId);
-
-        if (filmId == null) throw new ValidationException("Укажите ID фильма");
-
-        if (filmId <= 0) throw new ValidationException("ID фильма не может быть [" + filmId + "]");
-
-        if (userId == null) throw new ValidationException("Укажите ID пользователя");
-
-        if (userId <= 0) throw new ValidationException("ID пользователя не может быть [" + filmId + "]");
-
-        if (!filmStorage.getFilmMap().containsKey(filmId)) {
-            throw new NotFoundException("Фильм с ID [" + filmId + "] - не найден");
+        if (filmId == null || userId == null) {
+            throw new ValidationException("Id фильма и id пользователя должны быть указаны");
         }
 
-        if (!userStorage.getUserMap().containsKey(userId)) {
-            throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
+        if (filmId <= 0 || userId <= 0) {
+            throw new ValidationException("id фильма и id пользователя должны быть больше 0");
         }
 
         Film film = filmStorage.getFilmMap().get(filmId);
 
-        boolean filmNotNull = film != null;
-        log.debug("Объект Film не null: {}", filmNotNull);
-
-        boolean likeExists = film.getUsersWhoLikedIt()
-                .stream()
-                .anyMatch(id -> id.equals(userId));
-
-        if (!likeExists) {
-            throw new NotFoundException("Пользователь с ID [" + userId + "] - не успел оценить фильм");
+        if (film == null) {
+            throw new NotFoundException("Фильм с id [" + filmId + "] - не найден");
         }
 
-        log.debug("Было лайков: {}", film.getLikes());
+        User user = userStorage.getUserMap().get(userId);
 
-        film.getUsersWhoLikedIt().remove(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id [" + userId + "] - не найден");
+        }
 
-        log.debug("\nСтало лайков: {}", film.getLikes());
+        if (!film.getUsersWhoLikedIt().contains(user.getId())) {
+            throw new NotFoundException("Пользователь с id [" + user.getId() + "] - не поставил лайк");
+        }
+
+        film.getUsersWhoLikedIt().remove(user.getId());
 
         return film.getLikes();
     }
@@ -87,42 +75,33 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Long addLike(Long filmId, Long userId) throws ValidationException, NotFoundException {
 
-        log.debug("Получены данные{},{}", filmId, userId);
-
-        if (filmId == null) throw new ValidationException("Укажите ID фильма");
-
-        if (filmId <= 0) throw new ValidationException("ID фильма не может быть [" + filmId + "]");
-
-        if (userId == null) throw new ValidationException("Укажите ID пользователя");
-
-        if (userId <= 0) throw new ValidationException("ID пользователя не может быть [" + filmId + "]");
-
-        if (!filmStorage.getFilmMap().containsKey(filmId)) {
-            throw new NotFoundException("Фильм с ID [" + filmId + "] - не найден");
+        if (filmId == null || userId == null) {
+            throw new ValidationException("Id фильма и id пользователя должны быть указаны");
         }
 
-        if (!userStorage.getUserMap().containsKey(userId)) {
-            throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
+        if (filmId <= 0 || userId <= 0) {
+            throw new ValidationException("id фильма и id пользователя должны быть больше 0");
         }
 
         Film film = filmStorage.getFilmMap().get(filmId);
 
-        boolean filmNotNull = film != null;
-        log.debug("Объект Film не null: {}", filmNotNull);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id [" + filmId + "] - не найден");
+        }
 
-        log.debug("Было лайков: {}", film.getLikes());
+        User user = userStorage.getUserMap().get(userId);
 
-        film.getUsersWhoLikedIt().add(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id [" + userId + "] - не найден");
+        }
 
-        log.debug("\nСтало лайков: {}", film.getLikes());
+        film.getUsersWhoLikedIt().add(user.getId());
 
         return film.getLikes();
     }
 
     @Override
     public Collection<Film> topOfBestFilms(Integer count) {
-
-        log.info("Полученное кол-во фильмов [{}]", count);
 
         return filmStorage.getFilmMap().values()
                 .stream()

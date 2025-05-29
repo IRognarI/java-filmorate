@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.DuplicatedException;
@@ -12,14 +11,12 @@ import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.util.*;
 
-@Slf4j
 @Component
 @Primary
 public class InMemoryFilmStorage implements FilmStorage {
 
     @Getter
     private final Map<Long, Film> filmMap = new HashMap<>();
-    private Film film;
 
     @Override
     public Film addFilm(Film filmObject) throws ValidationException, DuplicatedException {
@@ -27,22 +24,15 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("Не достаточно данных для добавления фильма");
         }
 
-        boolean nameFilmExists = filmMap.values()
+        boolean nameFilmExists = getFilmMap().values()
                 .stream()
-                .map(f -> f.getName().trim())
-                .anyMatch(f -> f.equalsIgnoreCase(filmObject.getName().trim()));
+                .anyMatch(f -> f.getName().trim().equalsIgnoreCase(filmObject.getName().trim()));
 
         if (nameFilmExists) {
             throw new DuplicatedException("Кино уже было добавлено");
         }
 
-        log.debug("Получено ID: {}", filmObject.getId());
-        log.debug("Получено название: {}", filmObject.getName().trim());
-        log.debug("Получено описание: {}", filmObject.getDescription().trim());
-        log.debug("Получена дата: ", filmObject.getReleaseDate());
-        log.debug("Получена продолжительность: {}", filmObject.getDuration());
-
-        film = new Film();
+        Film film = new Film();
 
         film.setId(nextID());
         film.setName(film.validationName(filmObject.getName()));
@@ -57,56 +47,50 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film filmObject) throws NotFoundException, DuplicatedException {
         if (filmObject == null) {
-            throw new NotFoundException("Не достаточно данных для обновления фильма");
-        }
-
-        log.debug("Получено ID: " + filmObject.getId());
-        log.debug("Получено название: " + filmObject.getName().trim());
-        log.debug("Получено описание: " + filmObject.getDescription().trim());
-        log.debug("Получена дата: " + filmObject.getReleaseDate());
-        log.debug("Получена продолжительность: " + filmObject.getDuration());
-
-        Film oldFilm = filmMap.get(filmObject.getId());
-
-        if (oldFilm == null) {
             addFilm(filmObject);
         }
 
-        if (oldFilm.getId() != null && filmMap.containsKey(filmObject.getId())) {
-
-            boolean nameFilmExists = filmMap.values()
-                    .stream()
-                    .map(f -> f.getName().trim())
-                    .anyMatch(f -> f.equalsIgnoreCase(filmObject.getName().trim()));
-
-
-            if (nameFilmExists) {
-                throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
-            }
-
-            oldFilm.setName(film.validationName(filmObject.getName()));
-
-            oldFilm.setDescription(film.validationDescription(!filmObject.getDescription()
-                    .equalsIgnoreCase(oldFilm.getDescription()) ? filmObject.getDescription() : oldFilm.getDescription()));
-
-            oldFilm.setReleaseDate(film.validationReleaseDate(!filmObject.getReleaseDate()
-                    .isEqual(oldFilm.getReleaseDate()) ? filmObject.getReleaseDate() : oldFilm.getReleaseDate()));
-
-            oldFilm.setDuration(film.validationDuration(filmObject.getDuration() != oldFilm.getDuration() ?
-                    filmObject.getDuration() : oldFilm.getDuration()));
+        if (filmObject.getId() == null) {
+            throw new ValidationException("Id фильма должен быть указан");
         }
+
+        Film oldFilm = getFilmMap().get(filmObject.getId());
+
+        if (oldFilm == null) {
+            throw new NotFoundException("Фильм с id [" + filmObject.getId() + "] - не найден");
+        }
+
+        boolean nameFilmExists = getFilmMap().values()
+                .stream()
+                .anyMatch(f -> f.getName().trim().equalsIgnoreCase(filmObject.getName().trim()));
+
+        if (nameFilmExists) {
+            throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
+        }
+
+        if (!oldFilm.getName().equalsIgnoreCase(filmObject.getName())) {
+            oldFilm.setName(oldFilm.validationName(filmObject.getName()));
+        }
+
+        oldFilm.setDescription(filmObject.getDescription());
+
+        if (!oldFilm.getReleaseDate().isEqual(filmObject.getReleaseDate())) {
+            oldFilm.setReleaseDate(oldFilm.validationReleaseDate(filmObject.getReleaseDate()));
+        }
+
+        oldFilm.setDuration(filmObject.getDuration());
 
         return oldFilm;
     }
 
     @Override
     public Collection<Film> getFilms() {
-        return filmMap.values();
+        return getFilmMap().values();
     }
 
     @Override
     public void deleteAllFilms() {
-        filmMap.clear();
+        getFilmMap().clear();
     }
 
     private Long nextID() {

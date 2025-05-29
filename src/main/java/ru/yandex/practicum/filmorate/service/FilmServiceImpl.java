@@ -103,6 +103,10 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Collection<Film> topOfBestFilms(Integer count) {
 
+        if (count < 0) {
+            throw new ValidationException("Ограничение - должно быть положительным числом, а у вас [" + count + "]");
+        }
+
         return filmStorage.getFilmMap().values()
                 .stream()
                 .sorted(Comparator.comparing(Film::getLikes).reversed())

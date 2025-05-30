@@ -60,17 +60,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id [" + filmObject.getId() + "] - не найден");
         }
 
-        /*boolean nameFilmExists = getFilmMap().values()
-                .stream()
-                .anyMatch(f -> f.getName().trim().equalsIgnoreCase(filmObject.getName().trim()));
-
-        if (nameFilmExists) {
-
-            if (!oldFilm.getName().equalsIgnoreCase(filmObject.getName())) {
-                throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
-            }
-        }*/
-
         if (!oldFilm.getName().equalsIgnoreCase(filmObject.getName())) {
             oldFilm.setName(filmObject.getName());
         }

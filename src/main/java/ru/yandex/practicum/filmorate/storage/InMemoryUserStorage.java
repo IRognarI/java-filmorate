@@ -69,27 +69,6 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id [" + userObject.getId() + "] - не найден");
         }
 
-        /*boolean emailExists = getUserMap().values()
-                .stream()
-                .anyMatch(u -> u.getEmail().trim().equalsIgnoreCase(userObject.getEmail().trim()));
-
-        if (emailExists) {
-
-            if (!oldUser.getEmail().equalsIgnoreCase(userObject.getEmail())) {
-                throw new DuplicatedException("Email адрес: " + userObject.getEmail() + " - занят");
-            }
-        }*/
-
-        /*boolean loginExists = getUserMap().values()
-                .stream()
-                .anyMatch(u -> u.getLogin().trim().equalsIgnoreCase(userObject.getLogin().trim()));
-
-        if (loginExists) {
-
-            if (!oldUser.getLogin().equalsIgnoreCase(userObject.getLogin())) {
-                throw new DuplicatedException("Логин: " + userObject.getLogin() + " - занят");
-            }
-        }*/
 
         if (!oldUser.getEmail().equalsIgnoreCase(userObject.getEmail())) {
             oldUser.setEmail(userObject.getEmail());

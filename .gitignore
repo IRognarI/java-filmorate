@@ -11,8 +11,8 @@ hs_err_pid*
 out/
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!**/src/maintarget/
+!**/src/testtarget/
 
 ### STS ###
 .apt_generated
@@ -36,8 +36,8 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!**/src/mainbuild/
+!**/src/testbuild/
 
 ### VS Code ###
 .vscode/

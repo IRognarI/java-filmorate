@@ -35,7 +35,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = new Film();
 
         film.setId(nextID());
-        film.setName(film.validationName(filmObject.getName()));
+        film.setName(filmObject.getName());
         film.setDescription(film.validationDescription(filmObject.getDescription()));
         film.setReleaseDate(film.validationReleaseDate(filmObject.getReleaseDate()));
         film.setDuration(film.validationDuration(filmObject.getDuration()));
@@ -47,7 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film filmObject) throws NotFoundException, DuplicatedException {
         if (filmObject == null) {
-            addFilm(filmObject);
+            return addFilm(filmObject);
         }
 
         if (filmObject.getId() == null) {
@@ -60,25 +60,32 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id [" + filmObject.getId() + "] - не найден");
         }
 
-        boolean nameFilmExists = getFilmMap().values()
+        /*boolean nameFilmExists = getFilmMap().values()
                 .stream()
                 .anyMatch(f -> f.getName().trim().equalsIgnoreCase(filmObject.getName().trim()));
 
         if (nameFilmExists) {
-            throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
-        }
+
+            if (!oldFilm.getName().equalsIgnoreCase(filmObject.getName())) {
+                throw new DuplicatedException("В коллекции фильмов уже есть кино с таким названием. Измените название!");
+            }
+        }*/
 
         if (!oldFilm.getName().equalsIgnoreCase(filmObject.getName())) {
-            oldFilm.setName(oldFilm.validationName(filmObject.getName()));
+            oldFilm.setName(filmObject.getName());
         }
 
-        oldFilm.setDescription(filmObject.getDescription());
+        if (filmObject.getDescription() != null) {
+            oldFilm.setDescription(oldFilm.validationDescription(filmObject.getDescription()));
+        }
 
         if (!oldFilm.getReleaseDate().isEqual(filmObject.getReleaseDate())) {
             oldFilm.setReleaseDate(oldFilm.validationReleaseDate(filmObject.getReleaseDate()));
         }
 
-        oldFilm.setDuration(filmObject.getDuration());
+        if (!filmObject.getDuration().equals(oldFilm.getDuration())) {
+            oldFilm.setDuration(oldFilm.validationDuration(filmObject.getDuration()));
+        }
 
         return oldFilm;
     }

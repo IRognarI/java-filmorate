@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,21 +22,21 @@ public class User {
 
     @Email(message = "Не корректный формат email адреса")
     private String email;
+
+    @NotNull(message = "Укажите логин")
     private String login;
     private String name;
-    private LocalDate birthday = LocalDate.now();
+
+    @NotNull(message = "Укажите дату рождения")
+    private LocalDate birthday;
 
     public LocalDate validationBirthday(LocalDate birthdayVal) throws ValidationException {
 
-        if (birthdayVal == null) {
-            throw new ValidationException("Дата рождения указана не корректно");
-        }
-
-        if (birthdayVal.isAfter(birthday)) {
+        if (birthdayVal.isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем времени");
         }
 
-        if (birthdayVal.isEqual(birthday)) {
+        if (birthdayVal.isEqual(LocalDate.now())) {
             throw new ValidationException("Вы еще слишком молоды для регистрации ;)");
         }
 
@@ -43,10 +44,6 @@ public class User {
     }
 
     public String validationLogin(String userLogin) throws ValidationException {
-
-        if (userLogin == null || userLogin.isEmpty()) {
-            throw new ValidationException("Логин не может быть пустым");
-        }
 
         int valueIsBlank = userLogin.trim().indexOf(" ");
 
@@ -57,9 +54,9 @@ public class User {
 
     public String validationName(String userName) throws ValidationException {
 
-        if (userName == null || userName.isEmpty()) {
+        if (userName == null) {
 
-            if (login != null && !login.isEmpty()) {
+            if (login != null) {
                 return login;
 
             } else {

@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.interfaces.UserService;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
+import java.util.stream.*;
 
 @Service
 @RequiredArgsConstructor
@@ -87,26 +88,21 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователя с ID [" + otherId + "] - не существует");
         }
 
-        Set<Long> userSet = new HashSet<>(firstUser.getFriends());
+        Set<Long> userSet = new TreeSet<>(firstUser.getFriends());
         userSet.retainAll(secondUser.getFriends());
 
-        Collection<User> commonFriends = new ArrayList<>();
+        Set<User> userCollection = userStorage.getUserMap().keySet()
+                .stream()
+                .filter(targetId -> userSet.stream()
+                        .anyMatch(id -> id.equals(targetId)))
+                .map(id -> userStorage.getUserMap().get(id))
+                .collect(Collectors.toSet());
 
-        for (Long usersID : userStorage.getUserMap().keySet()) {
-
-            for (Long targetID : userSet) {
-
-                if (usersID.equals(targetID)) {
-                    commonFriends.add(userStorage.getUserMap().get(targetID));
-                }
-            }
-        }
-
-        if (commonFriends.isEmpty()) {
+        if (userCollection.isEmpty()) {
             throw new NotFoundException("Общие друзья не найдены");
         }
 
-        return commonFriends;
+        return userCollection;
     }
 
     @Override
@@ -149,18 +145,11 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с ID [" + userId + "] - не найден");
         }
 
-        Collection<User> usersFriends = new ArrayList<>();
-
-        for (Long usersID : userStorage.getUserMap().keySet()) {
-
-            for (Long friendsID : user.getFriends()) {
-
-                if (usersID.equals(friendsID)) {
-                    usersFriends.add(userStorage.getUserMap().get(friendsID));
-                }
-            }
-        }
-
-        return usersFriends;
+        return userStorage.getUserMap().keySet()
+                .stream()
+                .filter(targetId -> user.getFriends().stream()
+                        .anyMatch(id -> id.equals(targetId)))
+                .map(id -> userStorage.getUserMap().get(id))
+                .collect(Collectors.toSet());
     }
 }

@@ -17,13 +17,6 @@ class FilmTest extends Film {
     }
 
     @Test
-    public void checkNameForEmptiness() {
-
-        Assertions.assertThrows(ValidationException.class, () -> film.validationName(null));
-        Assertions.assertThrows(ValidationException.class, () -> film.validationName(""));
-    }
-
-    @Test
     public void checkingCorrectnessOfName() {
 
         film.setName("Shark");

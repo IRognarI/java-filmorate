@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -23,7 +25,7 @@ public class Film {
     protected final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
     @JsonIgnore
-    @Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.PRIVATE)
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @JsonIgnore
@@ -31,25 +33,21 @@ public class Film {
     private final Set<Long> usersWhoLikedIt = new HashSet<>();
 
     private Long id;
+
+    @NotNull(message = "Укажите название фильма")
+    @NotEmpty(message = "Укажите название фильма")
     private String name;
+
+    @NotNull(message = "Заполните описание фильма")
     private String description;
+
+    @NotNull(message = "Укажите дату релиза фильма")
     private LocalDate releaseDate;
+
+    @NotNull(message = "Укажите продолжительность фильма")
     private Integer duration;
 
-    public String validationName(String nameFilms) throws ValidationException {
-
-        if (nameFilms == null || nameFilms.trim().isEmpty()) {
-            throw new ValidationException("Имя не может быть пустым");
-        }
-
-        return nameFilms.trim();
-    }
-
     public String validationDescription(String filmDescription) throws ValidationException {
-
-        if (filmDescription == null) {
-            throw new ValidationException("Не корректное описание фильма");
-        }
 
         if (filmDescription.length() > maxLengthDescription) {
             throw new ValidationException("Максимальная длина описания — " + maxLengthDescription + " символов");
@@ -60,21 +58,13 @@ public class Film {
 
     public LocalDate validationReleaseDate(LocalDate release) throws ValidationException {
 
-        if (release == null) {
-            throw new ValidationException("Укажите корректную дату релиза фильма");
-        }
-
         if (release.isBefore(minReleaseDate)) {
-            throw new ValidationException("Дата релиза не может быть раньше: " + minReleaseDate.format(format));
+            throw new ValidationException("Дата релиза не может быть раньше: " + minReleaseDate.format(getFormat()));
         }
         return release;
     }
 
     public Integer validationDuration(Integer filmDuration) throws ValidationException {
-
-        if (filmDuration == null) {
-            throw new ValidationException("Укажите корректную продолжительность фильма");
-        }
 
         if (filmDuration < 1) {
             throw new ValidationException("Продолжительность фильма не может быть: " + filmDuration);

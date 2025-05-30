@@ -1,16 +1,23 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 public class User {
     private Long id;
+
+    @JsonIgnore
+    @Getter
+    private final Set<Long> friends = new HashSet<>();
 
     @Email(message = "Не корректный формат email адреса")
     private String email;
@@ -18,10 +25,10 @@ public class User {
     private String name;
     private LocalDate birthday = LocalDate.now();
 
-    public LocalDate validationBirthday(LocalDate birthdayVal) throws NullPointerException, ValidationException {
+    public LocalDate validationBirthday(LocalDate birthdayVal) throws ValidationException {
 
         if (birthdayVal == null) {
-            throw new NullPointerException("Дата рождения указана не корректно");
+            throw new ValidationException("Дата рождения указана не корректно");
         }
 
         if (birthdayVal.isAfter(birthday)) {
@@ -35,39 +42,10 @@ public class User {
         return birthdayVal;
     }
 
-    public String validationEmail(String mail) throws NullPointerException, ValidationException {
-
-        if (mail == null || mail.isEmpty()) throw new NullPointerException("Укажите email адрес");
-
-        boolean correctedEmail = false;
-
-        int valueIsBlank = mail.trim().indexOf(" ");
-
-        if (valueIsBlank != -1) throw new ValidationException("Email адрес не может содержать пробелы");
-
-        char[] valueChars = mail.trim().toCharArray();
-
-        for (char ch : valueChars) {
-
-            if (ch == '@') {
-                correctedEmail = true;
-                break;
-            }
-        }
-
-        if (!correctedEmail) {
-            throw new ValidationException(
-                    "Email адрес не должен содержать пробелы и в адресе должен быть символ: \"@\".\nПример:" +
-                            " some_address@gmail.com");
-        } else {
-            return mail.trim();
-        }
-    }
-
-    public String validationLogin(String userLogin) throws NullPointerException, ValidationException {
+    public String validationLogin(String userLogin) throws ValidationException {
 
         if (userLogin == null || userLogin.isEmpty()) {
-            throw new NullPointerException("Логин не может быть пустым");
+            throw new ValidationException("Логин не может быть пустым");
         }
 
         int valueIsBlank = userLogin.trim().indexOf(" ");
@@ -77,7 +55,7 @@ public class User {
         return userLogin.trim();
     }
 
-    public String validationName(String userName) throws NullPointerException {
+    public String validationName(String userName) throws ValidationException {
 
         if (userName == null || userName.isEmpty()) {
 
@@ -85,7 +63,7 @@ public class User {
                 return login;
 
             } else {
-                throw new NullPointerException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
+                throw new ValidationException("Имя не обязательно для заполнения. Но поле \"login\" - обязательно");
             }
 
         } else {

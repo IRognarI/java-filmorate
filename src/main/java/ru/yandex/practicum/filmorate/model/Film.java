@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @NoArgsConstructor
 @Data
@@ -24,6 +25,10 @@ public class Film {
     @JsonIgnore
     @Getter(AccessLevel.NONE)
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    @JsonIgnore
+    @Getter
+    private final Set<Long> usersWhoLikedIt = new HashSet<>();
 
     private Long id;
     private String name;
@@ -76,5 +81,9 @@ public class Film {
         }
 
         return filmDuration;
+    }
+
+    public long getLikes() {
+        return usersWhoLikedIt.size();
     }
 }

@@ -7,7 +7,9 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.rating.Rating;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -46,6 +48,44 @@ public class Film {
 
     @NotNull(message = "Укажите продолжительность фильма")
     private Integer duration;
+
+    private Set<String> genresFilm = new TreeSet<>();
+
+    @NotNull(message = "Укажите возрастной рейтинг фильма")
+    private String rating;
+
+    public String[] validationGenre(String[] genres) {
+
+        if (genres.length == 0) {
+            throw new ValidationException("Укажите хотя бы один жанр фильма");
+        }
+        return genres;
+    }
+
+    public String validationRating(String filmRating) {
+        filmRating = filmRating.toUpperCase().trim();
+
+        int targetIndexChar = filmRating.indexOf("-");
+
+        if (targetIndexChar != -1) {
+            filmRating = filmRating.replace("-", "_");
+        }
+
+        boolean ratingExists = false;
+        for (Enum<Rating> r : Rating.values()) {
+            String targetRating = String.valueOf(r);
+
+            if (filmRating.equals(targetRating)) {
+                ratingExists = true;
+                break;
+            }
+        }
+
+        if (!ratingExists) {
+            throw new NotFoundException("Рейтинг: " + filmRating + " - не признан ассоциацией кинокомпаний");
+        }
+        return filmRating;
+    }
 
     public String validationDescription(String filmDescription) throws ValidationException {
 

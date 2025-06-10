@@ -3,9 +3,11 @@ package ru.yandex.practicum.filmorate.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
+import java.util.*;
 
 class FilmTest extends Film {
     private Film film;
@@ -63,5 +65,51 @@ class FilmTest extends Film {
     public void checkNegativeDurationOfMovie() {
         Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(0));
         Assertions.assertThrows(ValidationException.class, () -> film.validationDuration(-10));
+    }
+
+    @Test
+    public void CheckingPresenceOfRatingIndatabase() {
+
+        film.setRating(film.validationRating("r"));
+        Assertions.assertEquals("R", film.getRating());
+    }
+
+    @Test
+    public void settingThePG_13rating() {
+
+        film.setRating(film.validationRating("pg-13"));
+        Assertions.assertEquals("PG_13", film.getRating());
+    }
+
+    @Test
+    public void settingNonExistentRating() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> film.validationRating("y"));
+    }
+
+    @Test
+    public void checkingPresenceOfGenres() {
+
+        String[] filmGenres = {"Боевик", "Драма", "Документальный"};
+
+        film.getGenresFilm().addAll(List.of(film.validationGenre(filmGenres)));
+
+        Assertions.assertEquals(3, film.getGenresFilm().toArray().length);
+    }
+
+    @Test
+    public void checkingLackOfGenres() {
+
+        String[] filmGenres = {};
+        Assertions.assertThrows(ValidationException.class, () -> film.validationGenre(filmGenres));
+    }
+
+    @Test
+    public void addingOneGenre() {
+        String[] filmGenres = {"Боевик"};
+
+        film.getGenresFilm().addAll(List.of(film.validationGenre(filmGenres)));
+
+        Assertions.assertEquals(1, film.getGenresFilm().toArray().length);
     }
 }

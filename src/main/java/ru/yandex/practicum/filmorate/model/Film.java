@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.rating.Rating;
@@ -48,6 +45,9 @@ public class Film {
 
     @NotNull(message = "Укажите продолжительность фильма")
     private Integer duration;
+
+    @Setter(AccessLevel.NONE)
+    private Long likes = getLiusersWhoLikedItkesSize();
 
     private Set<String> genresFilm = new TreeSet<>();
 
@@ -113,7 +113,7 @@ public class Film {
         return filmDuration;
     }
 
-    public long getLikes() {
+    private long getLiusersWhoLikedItkesSize() {
         return usersWhoLikedIt.size();
     }
 }

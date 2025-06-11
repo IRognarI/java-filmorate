@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -17,13 +17,13 @@ public class User {
     private Long id;
 
     @JsonIgnore
-    @Getter
     private final Set<Long> friends = new HashSet<>();
 
     @Email(message = "Не корректный формат email адреса")
     private String email;
 
     @NotNull(message = "Укажите логин")
+    @NotEmpty(message = "Логин не может быть пустым")
     private String login;
     private String name;
 
@@ -54,7 +54,7 @@ public class User {
 
     public String validationName(String userName) throws ValidationException {
 
-        if (userName == null) {
+        if (userName == null || userName.isEmpty()) {
 
             if (login != null) {
                 return login;

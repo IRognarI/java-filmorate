@@ -46,7 +46,7 @@ FROM film;
 
 ```SQL
 SELECT
-name
+name,
 login,
 email,
 birthday
@@ -57,11 +57,11 @@ FROM user
 
 ```SQL
 SELECT
-COUNT(ul.user_id) AS likes
-f.name
+COUNT(ul.user_id) AS likes,
+f.name AS film_name
 from film AS f
 LEFT JOIN user_like AS ul ON f.film_id=ul.film_id
-GROUP BY f.film_id
+GROUP BY f.film_id, film_name
 ORDER BY likes DESC
 LIMIT 10;
 ```

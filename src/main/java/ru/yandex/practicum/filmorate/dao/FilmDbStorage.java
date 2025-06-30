@@ -45,15 +45,14 @@ public class FilmDbStorage implements FilmStorage {
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             String checkGenreSql = "SELECT COUNT(*) FROM genres WHERE genre_id = ?";
-
             for (Genre genre : film.getGenres()) {
-                Integer count = jdbcTemplate.queryForObject(
+                Integer genreCount = jdbcTemplate.queryForObject(
                         checkGenreSql,
                         Integer.class,
                         genre.getId()
                 );
 
-                if (count == null || count == 0) {
+                if (genreCount == null || genreCount == 0) {
                     throw new NotFoundException("Жанр с id=" + genre.getId() + " не найден");
                 }
             }

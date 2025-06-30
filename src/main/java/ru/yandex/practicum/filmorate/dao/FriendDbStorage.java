@@ -43,7 +43,6 @@ public class FriendDbStorage implements FriendStorage {
                 "INNER JOIN users AS u ON u.user_id = f.friend_id " +
                 "WHERE f.user_id = ? " +
                 "ORDER BY u.user_id";
-
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFriend(rs), id);
     }
 

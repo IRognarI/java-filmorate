@@ -22,14 +22,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-<<<<<<< HEAD
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-=======
->>>>>>> b13c2dd (Произведен рефакторинг кода: 1. Исправлены валидаторы в POJO (заменены на аннотации), также согласно условию ТЗ добавлены новые сущности + реализована работа с БД Н2. Изменена структура дирректорий проекта. Добавлены новые интерфейсы и контроллеры. Добавлены DAO классы (реализующие новые интерфейсы). Приложение проверено через Postman. Все тесты пройдены успешно.)
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>

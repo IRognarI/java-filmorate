@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -7,44 +8,34 @@ import lombok.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.rating.Rating;
+=======
+import lombok.Builder;
+import lombok.Data;
+import ru.yandex.practicum.filmorate.annotation.ReleaseDate;
+>>>>>>> b13c2dd (Произведен рефакторинг кода: 1. Исправлены валидаторы в POJO (заменены на аннотации), также согласно условию ТЗ добавлены новые сущности + реализована работа с БД Н2. Изменена структура дирректорий проекта. Добавлены новые интерфейсы и контроллеры. Добавлены DAO классы (реализующие новые интерфейсы). Приложение проверено через Postman. Все тесты пройдены успешно.)
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
-@NoArgsConstructor
 @Data
+@Builder
 public class Film {
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    protected final int maxLengthDescription = 200;
-
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    protected final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
-
-    @JsonIgnore
-    @Getter(AccessLevel.PRIVATE)
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-    @JsonIgnore
-    @Getter
-    private final Set<Long> usersWhoLikedIt = new HashSet<>();
-
-    private Long id;
-
-    @NotNull(message = "Укажите название фильма")
-    @NotEmpty(message = "Укажите название фильма")
+    private Integer id;
+    @NotBlank(message = "Введите название фильма.")
     private String name;
-
-    @NotNull(message = "Заполните описание фильма")
+    @NotNull
+    @Size(max = 200, message = "Слишком длинное описание.")
     private String description;
-
-    @NotNull(message = "Укажите дату релиза фильма")
+    @NotNull
+    @ReleaseDate(value = "1895-12-28", message = "Введите дату релиза не ранее 28 декабря 1895 года.")
     private LocalDate releaseDate;
-
-    @NotNull(message = "Укажите продолжительность фильма")
+    @Positive(message = "Продолжительность фильма должна быть больше 0.")
     private Integer duration;
+<<<<<<< HEAD
 
     @Setter(AccessLevel.NONE)
     private Long likes = getLiusersWhoLikedItkesSize();
@@ -116,4 +107,9 @@ public class Film {
     private long getLiusersWhoLikedItkesSize() {
         return usersWhoLikedIt.size();
     }
+=======
+    @NotNull
+    private Mpa mpa;
+    private final LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+>>>>>>> b13c2dd (Произведен рефакторинг кода: 1. Исправлены валидаторы в POJO (заменены на аннотации), также согласно условию ТЗ добавлены новые сущности + реализована работа с БД Н2. Изменена структура дирректорий проекта. Добавлены новые интерфейсы и контроллеры. Добавлены DAO классы (реализующие новые интерфейсы). Приложение проверено через Postman. Все тесты пройдены успешно.)
 }

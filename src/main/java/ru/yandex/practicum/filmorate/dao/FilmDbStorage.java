@@ -21,12 +21,12 @@ import java.util.*;
 @RequiredArgsConstructor
 @Repository
 public class FilmDbStorage implements FilmStorage {
-    private final JdbcTemplate jdbcTemplate;
-
     private static final String SELECT_FILMS = "SELECT f.film_id, f.name, f.description, f.releaseDate, f.duration, " +
             "mpa.rating_id, mpa.name AS mpa_name " +
             "FROM films AS f " +
             "INNER JOIN mpa_rating AS mpa ON f.rating_id = mpa.rating_id ";
+
+    private final JdbcTemplate jdbcTemplate;
 
 
     @Override

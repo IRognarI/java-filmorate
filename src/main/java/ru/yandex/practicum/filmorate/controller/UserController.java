@@ -1,71 +1,68 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.interfaces.UserService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.*;
+import javax.validation.Valid;
 
-@RestController
+@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RestController
+@RequestMapping("users")
 public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody @Valid User userObject) {
-        return userService.createUser(userObject);
+    public User create(@Valid @RequestBody User user) {
+        log.info("POST / user / {}", user.getLogin());
+        userService.create(user);
+        return user;
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@RequestBody @Valid User userObject) {
-        return userService.updateUser(userObject);
-    }
-
-    @PutMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addFriends(@PathVariable(name = "id") Long userId,
-                           @PathVariable(name = "friendId") Long friendId) {
-
-        userService.addFriends(userId, friendId);
+    public User update(@Valid @RequestBody User user) {
+        log.info("PUT / user / {}", user.getLogin());
+        userService.update(user);
+        return user;
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUsers() {
-        return userService.getUsers();
+    public List<User> findAll() {
+        log.info("GET / users");
+        return userService.findAll();
     }
 
-    @GetMapping("/{id}/friends")
-    @ResponseStatus(HttpStatus.OK)
-    public Collection<User> usersFriends(@PathVariable(name = "id") Long userId) {
-        return userService.usersFriends(userId);
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable("id") int id) {
+        log.info("GET / users / {}", id);
+        return userService.findUserById(id);
     }
 
-    @GetMapping("{id}/friends/common/{otherId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Collection<User> commonFriends(@PathVariable(name = "id") Long userId,
-                                          @PathVariable(name = "otherId") Long otherId) {
-
-        return userService.commonFriends(userId, otherId);
-    }
-
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUsers() {
-        userService.deleteUsers();
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        log.info("PUT / {} / friends / {}", id, friendId);
+        userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFromFriends(@PathVariable(name = "id") Long userId,
-                                  @PathVariable(name = "friendId") Long friendId) {
+    public void removeFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        log.info("PUT / {} / friends / {}", id, friendId);
+        userService.removeFriend(id, friendId);
+    }
 
-        userService.deleteFromFriends(userId, friendId);
+    @GetMapping("/{id}/friends")
+    public List<User> findAllFriends(@PathVariable("id") int id) {
+        log.info("GET / {} / friends", id);
+        return userService.findAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> findCommonFriends(@PathVariable("id") int id, @PathVariable("otherId") int otherId) {
+        log.info("GET / {} / friends / common / {}", id, otherId);
+        return userService.findCommonFriends(id, otherId);
     }
 }

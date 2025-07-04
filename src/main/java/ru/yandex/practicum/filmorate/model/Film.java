@@ -1,79 +1,31 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.annotation.ReleaseDate;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
-@NoArgsConstructor
 @Data
+@Builder
 public class Film {
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    protected final int maxLengthDescription = 200;
-
-    @JsonIgnore
-    @Getter(AccessLevel.NONE)
-    protected final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
-
-    @JsonIgnore
-    @Getter(AccessLevel.PRIVATE)
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-    @JsonIgnore
-    @Getter
-    private final Set<Long> usersWhoLikedIt = new HashSet<>();
-
-    private Long id;
-
-    @NotNull(message = "Укажите название фильма")
-    @NotEmpty(message = "Укажите название фильма")
+    private Integer id;
+    @NotBlank(message = "Введите название фильма.")
     private String name;
-
-    @NotNull(message = "Заполните описание фильма")
+    @NotNull
+    @Size(max = 200, message = "Слишком длинное описание.")
     private String description;
-
-    @NotNull(message = "Укажите дату релиза фильма")
+    @NotNull
+    @ReleaseDate(value = "1895-12-28", message = "Введите дату релиза не ранее 28 декабря 1895 года.")
     private LocalDate releaseDate;
-
-    @NotNull(message = "Укажите продолжительность фильма")
+    @Positive(message = "Продолжительность фильма должна быть больше 0.")
     private Integer duration;
-
-    public String validationDescription(String filmDescription) throws ValidationException {
-
-        if (filmDescription.length() > maxLengthDescription) {
-            throw new ValidationException("Максимальная длина описания — " + maxLengthDescription + " символов");
-        }
-
-        return filmDescription.trim();
-    }
-
-    public LocalDate validationReleaseDate(LocalDate release) throws ValidationException {
-
-        if (release.isBefore(minReleaseDate)) {
-            throw new ValidationException("Дата релиза не может быть раньше: " + minReleaseDate.format(getFormat()));
-        }
-        return release;
-    }
-
-    public Integer validationDuration(Integer filmDuration) throws ValidationException {
-
-        if (filmDuration < 1) {
-            throw new ValidationException("Продолжительность фильма не может быть: " + filmDuration);
-        }
-
-        return filmDuration;
-    }
-
-    public long getLikes() {
-        return usersWhoLikedIt.size();
-    }
+    @NotNull
+    private Mpa mpa;
+    private final LinkedHashSet<Genre> genres = new LinkedHashSet<>();
 }
